@@ -38,11 +38,6 @@ dependencies = ["clean"]
 command = "sh"
 args = ["./setup.sh"]
 
-[tasks.deploy]
-command = "pulumi"
-args = ["up", "--cwd", "/Users/rexraphael/Work/wakflo/ngine/infra", "--yes"]
-dependencies = []
-
 [tasks.build-prod]
 command = "cargo"
 args = ["build", "--release", "--all-features"]
