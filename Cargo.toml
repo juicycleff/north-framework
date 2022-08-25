@@ -3,4 +3,5 @@ members = [
     # Crates
     "crates/north",
     "crates/north-config",
+    "crates/north-consul",
 ]
