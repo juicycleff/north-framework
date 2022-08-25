@@ -659,21 +659,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "consul"
-version = "0.4.2"
-source = "git+https://github.com/juicycleff/consul-rust?branch=master#78c39640e86803299aa9b632d3ace53d00703ebe"
-dependencies = [
- "async-trait",
- "error-chain",
- "log",
- "reqwest",
- "serde",
- "serde_derive",
- "serde_json",
- "url",
-]
-
-[[package]]
 name = "convert_case"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1892,7 +1877,6 @@ dependencies = [
  "async-zeroconf",
  "chrono",
  "clone_all",
- "consul",
  "derive_more",
  "econf",
  "futures",
@@ -1901,6 +1885,7 @@ dependencies = [
  "log4rs",
  "mockall",
  "nanoid",
+ "north-consul 0.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "poem",
  "poem-openapi",
  "rayon",
@@ -1952,6 +1937,22 @@ dependencies = [
  "serde_json",
  "tokio",
  "tokio-test",
+ "url",
+]
+
+[[package]]
+name = "north-consul"
+version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6c90275c5a2a45bcf674507ac9736cf56425961f3bb869c235e4185f9c2c3bdc"
+dependencies = [
+ "async-trait",
+ "error-chain",
+ "log",
+ "reqwest",
+ "serde",
+ "serde_derive",
+ "serde_json",
  "url",
 ]
 
