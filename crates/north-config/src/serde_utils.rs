@@ -14,7 +14,7 @@ pub trait Merge {
 /// # Example
 /// ```
 /// use serde_json::json;
-/// use north::utils::serde_utils::merge_json;
+/// use north_config::serde_utils::merge_json;
 ///
 /// let mut a = json!({
 ///   "title": "This is a title",
@@ -56,12 +56,13 @@ pub fn merge_json(a: &mut Value, b: Value) {
     }
 }
 
+#[cfg(feature = "yaml")]
 /// function merges a yaml string into a json value
 ///
 /// usage:
 /// ```rust
 /// use serde_json::json;
-/// use north::utils::serde_utils::merge_json_and_yaml;
+/// use north_config::serde_utils::merge_json_and_yaml;
 /// let mut a = json!({
 ///   "title": "This is a title",
 ///   "person" : {
@@ -83,7 +84,7 @@ impl Merge for Value {
     /// # Examples: Merge two array together.
     /// ```
     /// use serde_json::Value;
-    /// use north::utils::serde_utils::Merge;
+    /// use north_config::serde_utils::Merge;
     ///
     /// let mut array1: Value = serde_json::from_str(r#"["a","b"]"#).unwrap();
     /// let array2: Value = serde_json::from_str(r#"["b","c"]"#).unwrap();
@@ -93,7 +94,7 @@ impl Merge for Value {
     /// # Examples: Merge two objects together.
     /// ```
     /// use serde_json::Value;
-    /// use north::utils::serde_utils::Merge;
+    /// use north_config::serde_utils::Merge;
     ///
     /// let mut object1: Value = serde_json::from_str(r#"{"value1":"a","value2":"b"}"#).unwrap();
     /// let object2: Value = serde_json::from_str(r#"{"value1":"a","value2":"c","value3":"d"}"#).unwrap();
@@ -103,7 +104,7 @@ impl Merge for Value {
     /// # Examples: Merge an object into an array.
     /// ```
     /// use serde_json::Value;
-    /// use north::utils::serde_utils::Merge;
+    /// use north_config::serde_utils::Merge;
     ///
     /// let mut array: Value = serde_json::from_str(r#"[]"#).unwrap();
     /// let object: Value = serde_json::from_str(r#"{"field1":"value1"}"#).unwrap();
@@ -113,7 +114,7 @@ impl Merge for Value {
     /// # Examples: Merge an array into an object.
     /// ```
     /// use serde_json::Value;
-    /// use north::utils::serde_utils::Merge;
+    /// use north_config::serde_utils::Merge;
     ///
     /// let mut object: Value = serde_json::from_str(r#"{"field1":"value1"}"#).unwrap();
     /// let array: Value = serde_json::from_str(r#"["value2","value3"]"#).unwrap();
@@ -126,7 +127,7 @@ impl Merge for Value {
     /// # Examples: Merge an array in an object in a specific position.
     /// ```
     /// use serde_json::Value;
-    /// use north::utils::serde_utils::Merge;
+    /// use north_config::serde_utils::Merge;
     ///
     /// let mut object: Value = serde_json::from_str(r#"{"my_array":[{"a":"t"}]}"#).unwrap();
     /// let array: Value = serde_json::from_str(r#"["b","c"]"#).unwrap();
@@ -136,7 +137,7 @@ impl Merge for Value {
     /// # Examples: Merge two objects together in a specific position.
     /// ```
     /// use serde_json::Value;
-    /// use north::utils::serde_utils::Merge;
+    /// use north_config::serde_utils::Merge;
     ///
     /// let mut object1: Value = serde_json::from_str(r#"{"my_array":[{"a":"t"}]}"#).unwrap();
     /// let object2: Value = serde_json::from_str(r#"{"b":"c"}"#).unwrap();
@@ -146,7 +147,7 @@ impl Merge for Value {
     /// # Examples: Merge an object in an array in a specific position.
     /// ```
     /// use serde_json::Value;
-    /// use north::utils::serde_utils::Merge;
+    /// use north_config::serde_utils::Merge;
     ///
     /// let mut json_value: Value = serde_json::from_str(r#"[{"array1":[{"field":"value1"}]}]"#).unwrap();
     /// json_value.merge_in("/other_field", Value::String("value".to_string()));
@@ -155,7 +156,7 @@ impl Merge for Value {
     // # Examples: Build a new object.
     // ```
     // use serde_json::{Map,Value};
-    // use north::utils::serde_utils::Merge;
+    // use north_config::serde_utils::Merge;
     //
     // let mut object: Value = Value::default();
     // object.merge_in("/field", Value::String("value".to_string()));

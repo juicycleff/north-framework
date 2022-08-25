@@ -1,5 +1,5 @@
 <!--
-  Thanks for contributing!
+  Thanks for contributing to North Framework!
 
   Provide a description of your changes below and a general summary in the title
 

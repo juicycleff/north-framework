@@ -125,13 +125,14 @@ impl<T: Clone + de::DeserializeOwned> NorthConfig<T> {
 /// Example
 /// ```rust
 ///
+/// #[derive(Clone, serde::Deserialize, Debug)]
 /// struct DemoConfig {
-///     pub host: String,
+///     pub host: Option<String>,
 /// }
 ///  use north_config::{ConfigSource, EnvSourceOptions, NorthConfigOptions};
 ///  let config_options = NorthConfigOptions {
 ///     sources: vec![
-///         ConfigSource::File("configs/bootstrap.{{env}}.yaml".to_string()),
+///         // ConfigSource::File("/examples/configs/bootstrap.{{env}}.yaml".to_string()),
 ///         ConfigSource::Env(EnvSourceOptions::default()),
 ///     ],
 ///  };
@@ -155,17 +156,18 @@ pub async fn new_config<T: Clone + de::DeserializeOwned>(
 ///
 /// Example
 /// ```rust
+/// #[derive(Clone, serde::Deserialize, Debug)]
 /// struct DemoConfig {
-///     pub host: String,
+///     pub host: Option<String>,
 /// }
 ///  use north_config::{ConfigSource, EnvSourceOptions, NorthConfigOptions};
 ///  let config_options = NorthConfigOptions {
 ///     sources: vec![
-///         ConfigSource::File("configs/bootstrap.{{env}}.yaml".to_string()),
+///         // ConfigSource::File("/examples/configs/bootstrap.{{env}}.yaml".to_string()),
 ///         ConfigSource::Env(EnvSourceOptions::default()),
 ///     ],
 ///  };
-///  let config = north_config::new_config::<DemoConfig>(config_options).await;
+///  let config = north_config::new_config::<DemoConfig>(config_options);
 ///  let config_val = config.get_value();
 /// ```
 pub fn new_config<T: Clone + de::DeserializeOwned>(
@@ -311,7 +313,7 @@ fn resolve_file_source(
         panic!("No file found in path: {}", path.clone());
     }
     let file_path = path_buf.display().to_string();
-    let value = read_file_value(file_path).await;
+    let value = read_file_value(file_path);
 
     if !value.is_null() {
         Some(value)
@@ -373,6 +375,10 @@ async fn read_file_value(path: String) -> Value {
         file.read_to_string(&mut contents).await.unwrap();
     };
 
+    convert_str_to_value(path, contents)
+}
+
+fn convert_str_to_value(path: String, contents: String) -> Value {
     if path.ends_with(".yaml") || path.ends_with(".yml") {
         #[cfg(not(feature = "yaml"))]{
             panic!("missing yaml feature for crate, please enable yaml feature")
@@ -422,36 +428,7 @@ fn read_file_value(path: String) -> Value {
     let mut file = std::fs::File::open(path.clone()).expect("Unable to open file");
     file.read_to_string(&mut contents).unwrap();
 
-    if path.ends_with(".yaml") || path.ends_with(".yml") {
-        if !cfg!(feature = "yaml") {
-            panic!("missing yaml feature for crate, please enable yaml feature")
-        }
-        let yaml: Value =
-            serde_yaml::from_str::<Value>(&contents).expect("YAML does not have correct format.");
-        yaml
-    } else if path.ends_with(".toml") {
-        if !cfg!(feature = "toml") {
-            panic!("missing toml feature for crate, please enable toml feature")
-        }
-        let rsp: Value =
-            toml::from_str::<Value>(&contents).expect("TOML does not have correct format.");
-        rsp
-    } else if path.ends_with(".json") {
-        let json: Value =
-            serde_json::from_str(&contents).expect("JSON does not have correct format.");
-        json
-    } else if path.ends_with(".ron") {
-        if !cfg!(feature = "ron") {
-            panic!("missing ron feature for crate, please enable ron feature")
-        }
-        let data = ron::de::from_str(&contents).expect("RON does not have correct format.");
-        dbg!(contents.clone());
-        data
-    } else {
-        let json: Value =
-            serde_json::from_str(&contents).expect("JSON does not have correct format.");
-        json
-    }
+    convert_str_to_value(path, contents)
 }
 
 #[cfg(test)]
