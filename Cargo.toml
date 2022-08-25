@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    # Crates
+    "crates/north",
+    "crates/north-config",
+]

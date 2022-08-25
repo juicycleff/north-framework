@@ -1,0 +1,17 @@
+---
+
+concurrency: 3000
+base: 'https://ovitaira.com'
+iterations: 5000000
+rampup: 10000
+
+plan:
+  - name: Product
+    request:
+      url: /product/1b-burgundy-13x4-frontal/
+  - name: Home
+    request:
+      url: /
+  - name: About
+    request:
+      url: /about-us/

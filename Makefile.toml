@@ -1,0 +1,62 @@
+[env]
+CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
+
+[tasks.format]
+install_crate = "rustfmt"
+command = "cargo"
+args = ["fmt", "--", "--emit=files"]
+
+[tasks.lint]
+install_crate = "clippy"
+command = "cargo"
+args = ["clippy"]
+
+[tasks.lintfix]
+install_crate = "clippy"
+command = "cargo"
+args = ["clippy", "--fix", "--allow-dirty"]
+
+[tasks.build-with-verbose]
+command = "cargo"
+args = ["build", "--verbose", "--all-features"]
+
+[tasks.clean]
+command = "cargo"
+args = ["clean"]
+
+[tasks.build-project]
+command = "cargo"
+args = ["build", "-p", "${@}", "--verbose", "--all-features"]
+dependencies = ["clean"]
+
+[tasks.build]
+command = "cargo"
+args = ["build"]
+dependencies = ["clean"]
+
+[tasks.prepare]
+command = "sh"
+args = ["./setup.sh"]
+
+[tasks.deploy]
+command = "pulumi"
+args = ["up", "--cwd", "/Users/rexraphael/Work/wakflo/ngine/infra", "--yes"]
+dependencies = []
+
+[tasks.build-prod]
+command = "cargo"
+args = ["build", "--release", "--all-features"]
+dependencies = ["clean"]
+
+[tasks.test]
+command = "cargo"
+args = ["test"]
+dependencies = []
+#dependencies = ["clean"]
+
+[tasks.my-flow]
+dependencies = [
+    "format",
+    "build",
+    "test"
+]
