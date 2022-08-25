@@ -11,7 +11,7 @@ homepage = "https://github.com/juicycleff/north-framework"
 repository = "https://github.com/juicycleff/north-framework"
 keywords = ["async", "config", "env", "env-parser", "json"]
 categories = [
-    "configuration",
+    "config",
     "asynchronous",
 ]
 
