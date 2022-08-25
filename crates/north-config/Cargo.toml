@@ -9,7 +9,7 @@ license = "MIT/Apache-2.0"
 documentation = "https://docs.rs/north-config/"
 homepage = "https://github.com/juicycleff/north-framework"
 repository = "https://github.com/juicycleff/north-framework"
-keywords = ["framework", "async", "config", "env", "nested-config", "nested-env", "env-parser", "json-config"]
+keywords = ["async", "config", "env", "env-parser", "json"]
 categories = [
     "configuration",
     "asynchronous",
