@@ -4,7 +4,7 @@ A microservice framework
 ### Getting Started
 
 ```rust
-/// Entry into Varni service
+/// Entry into Example service
 #[tokio::main]
 pub async fn main() -> std::io::Result<()> {
     //#region Setup Server
