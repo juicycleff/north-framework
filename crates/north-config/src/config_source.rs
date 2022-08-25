@@ -123,7 +123,7 @@ impl<T: Clone + de::DeserializeOwned> NorthConfig<T> {
 /// creates a new instance of North Config. It accepts an array of data sources
 ///
 /// Example
-/// ```rust
+/// ```rust,ignore
 ///
 /// #[derive(Clone, serde::Deserialize, Debug)]
 /// struct DemoConfig {
@@ -155,7 +155,7 @@ pub async fn new_config<T: Clone + de::DeserializeOwned>(
 /// creates a new instance of North Config. It accepts an array of data sources
 ///
 /// Example
-/// ```rust
+/// ```rust,ignore
 /// #[derive(Clone, serde::Deserialize, Debug)]
 /// struct DemoConfig {
 ///     pub host: Option<String>,
