@@ -1847,7 +1847,7 @@ checksum = "61807f77802ff30975e01f4f071c8ba10c022052f98b3294119f3e615d13e5be"
 
 [[package]]
 name = "north"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "aragog",
  "async-trait",
