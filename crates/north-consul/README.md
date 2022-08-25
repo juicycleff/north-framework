@@ -1,7 +1,7 @@
 ## north-consul
 
 [![Build Status](https://github.com/juicycleff/north-framework/actions/workflows/rust.yml/badge.svg)](https://github.com/juicycleff/north-framework/actions?query=branch%3Amaster)
-[![](https://img.shields.io/crates/v/consul.svg)](https://crates.io/crates/consul)
+[![](https://img.shields.io/crates/v/consul.svg)](https://crates.io/crates/north-consul)
 
 Original Repo is here and all kudos to the owner [https://github.com/pierresouchay/consul-rust](https://github.com/pierresouchay/consul-rust)
 
