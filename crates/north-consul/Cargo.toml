@@ -29,4 +29,4 @@ rstest = "0.8.0"
 
 # Used to test async functions that return futures
 tokio = { version = "1.19", features = ["full"] }
-tokio-test = "*"
+tokio-test = "0.4"
