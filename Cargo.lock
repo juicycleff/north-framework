@@ -1819,14 +1819,14 @@ checksum = "61807f77802ff30975e01f4f071c8ba10c022052f98b3294119f3e615d13e5be"
 
 [[package]]
 name = "north"
-version = "0.0.2"
+version = "0.1.0"
 dependencies = [
  "aragog",
  "async-trait",
  "derive_more",
  "futures",
  "mockall",
- "north-common",
+ "north-common 0.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "poem",
  "poem-openapi",
  "rstest 0.13.0",
@@ -1848,6 +1848,22 @@ dependencies = [
  "log",
  "log4rs",
  "rstest 0.13.0",
+ "serde",
+ "serde_json",
+ "serde_yaml 0.8.26",
+ "yansi",
+]
+
+[[package]]
+name = "north-common"
+version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2a6fa3fae92c22b1f25d6c3ffbc8d3537d54791ebcc3ab12edbdd14aa46c81dc"
+dependencies = [
+ "async-trait",
+ "chrono",
+ "log",
+ "log4rs",
  "serde",
  "serde_json",
  "serde_yaml 0.8.26",
@@ -1916,7 +1932,7 @@ dependencies = [
  "async-zeroconf",
  "log",
  "nanoid",
- "north-common",
+ "north-common 0.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "north-consul 0.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
