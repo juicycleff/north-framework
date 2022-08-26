@@ -224,7 +224,7 @@ where
     #[cfg(not(debug_assertions))]
     let is_release = true;
 
-    for s in option.clone().sources {
+    for s in option.sources {
         match s {
             ConfigSource::Env(env_opt) => {
                 let value = resolve_env_source(env_opt);
@@ -305,9 +305,9 @@ fn resolve_file_source(
         true => original_path.replace("{{env}}", "release"),
         false => original_path.replace("{{env}}", "debug"),
     };
-    let path_buf = PathBuf::from(cargo_path.clone()).join(path.clone());
+    let path_buf = PathBuf::from(cargo_path).join(path.clone());
     if !path_buf.exists() {
-        panic!("No file found in path: {}", path.clone());
+        panic!("No file found in path: {}", path);
     }
     let file_path = path_buf.display().to_string();
     let value = read_file_value(file_path);
@@ -339,9 +339,9 @@ fn process_envs(option: EnvSourceOptions) -> Result<Value, Error> {
         let new_key = key.strip_prefix(prefix).expect("env var prefix missing");
         let mut dot_key: String = String::new();
         for sub_keys in new_key.split(separator) {
-            if dot_key.len() < 1 {
+            if dot_key.is_empty() {
                 dot_key.push_str(sub_keys.to_case(case).as_str());
-                dot_key.push_str(".");
+                dot_key.push('.');
             } else {
                 dot_key.push_str(sub_keys.to_case(case).as_str());
             }
