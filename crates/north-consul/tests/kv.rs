@@ -2,6 +2,7 @@ extern crate north_consul;
 use north_consul::kv::KVPair;
 use north_consul::{Client, Config};
 
+#[ignore]
 #[tokio::test]
 async fn kv_test() {
     use north_consul::kv::KV;

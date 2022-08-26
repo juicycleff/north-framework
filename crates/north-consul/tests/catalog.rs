@@ -1,6 +1,7 @@
 extern crate north_consul;
 use north_consul::{Client, Config};
 
+#[ignore]
 #[tokio::test]
 async fn ds_test() {
     use north_consul::catalog::Catalog;
@@ -10,6 +11,7 @@ async fn ds_test() {
     assert_eq!(r.0, ["dc1"]);
 }
 
+#[ignore]
 #[tokio::test]
 async fn ds_services_test() {
     use north_consul::catalog::Catalog;

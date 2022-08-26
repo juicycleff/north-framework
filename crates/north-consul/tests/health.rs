@@ -1,6 +1,7 @@
 extern crate north_consul;
 use north_consul::{Client, Config};
 
+#[ignore]
 #[tokio::test]
 async fn health_test() {
     use north_consul::health::Health;
