@@ -1,16 +1,16 @@
 use crate::serde_utils::Merge;
+use convert_case::Casing;
+use json_dotpath::DotPaths;
 use serde::de;
 use serde_json::Value;
 use std::path::PathBuf;
-use json_dotpath::DotPaths;
-use convert_case::{Casing};
 
 #[cfg(not(any(feature = "tokio", feature = "async-std")))]
 use std::io::Read;
 
-pub use convert_case::Case;
-use crate::utils::{import_env_vars, preamble};
 use crate::error::Error;
+use crate::utils::{import_env_vars, preamble};
+pub use convert_case::Case;
 
 /// # ConfigSource
 ///
@@ -60,9 +60,7 @@ pub struct NorthConfigOptions {
 
 impl NorthConfigOptions {
     pub fn new(sources: Vec<ConfigSource>) -> NorthConfigOptions {
-        NorthConfigOptions {
-            sources,
-        }
+        NorthConfigOptions { sources }
     }
 }
 
@@ -89,7 +87,7 @@ pub struct EnvSourceOptions {
     /// Accepts custom env file path to load up
     ///
     /// @defaults to [None]
-    pub env_file_path: Option<String>
+    pub env_file_path: Option<String>,
 }
 
 impl Default for EnvSourceOptions {
@@ -98,7 +96,7 @@ impl Default for EnvSourceOptions {
             prefix: Some("NORTH_".to_string()),
             nested_separator: Some("__".to_string()),
             key_case: Some(Case::Snake),
-            env_file_path: None
+            env_file_path: None,
         }
     }
 }
@@ -170,9 +168,7 @@ pub async fn new_config<T: Clone + de::DeserializeOwned>(
 ///  let config = north_config::new_config::<DemoConfig>(config_options);
 ///  let config_val = config.get_value();
 /// ```
-pub fn new_config<T: Clone + de::DeserializeOwned>(
-    option: NorthConfigOptions,
-) -> NorthConfig<T> {
+pub fn new_config<T: Clone + de::DeserializeOwned>(option: NorthConfigOptions) -> NorthConfig<T> {
     preamble();
 
     let value = resolve_source::<T>(option);
@@ -202,7 +198,8 @@ where
                 }
             }
             ConfigSource::File(original_path) => {
-                let value = resolve_file_source(cargo_path.clone(), original_path, is_release).await;
+                let value =
+                    resolve_file_source(cargo_path.clone(), original_path, is_release).await;
                 if value.is_some() {
                     current_value.merge(value.unwrap());
                 }
@@ -268,7 +265,7 @@ fn resolve_env_source(env_opt: EnvSourceOptions) -> Option<Value> {
         Err(error) => {
             println!("{:#?}", error);
             None
-        },
+        }
     }
 }
 
@@ -323,7 +320,6 @@ fn resolve_file_source(
     }
 }
 
-
 /// converts env vars to nested rust struct
 fn process_envs(option: EnvSourceOptions) -> Result<Value, Error> {
     let temp_prefix = option.prefix.unwrap_or("NORTH".to_string());
@@ -365,13 +361,18 @@ async fn read_file_value(path: String) -> Value {
     #[cfg(feature = "tokio")]
     {
         use tokio::io::AsyncReadExt;
-        let mut file = tokio::fs::File::open(path.clone()).await.expect("Unable to open file");
+        let mut file = tokio::fs::File::open(path.clone())
+            .await
+            .expect("Unable to open file");
         file.read_to_string(&mut contents).await.unwrap();
     }
 
-    #[cfg(feature = "async-std")] {
+    #[cfg(feature = "async-std")]
+    {
         use async_std::io::ReadExt;
-        let mut file = async_std::fs::File::open(path.clone()).await.expect("Unable to open file");
+        let mut file = async_std::fs::File::open(path.clone())
+            .await
+            .expect("Unable to open file");
         file.read_to_string(&mut contents).await.unwrap();
     };
 
@@ -380,21 +381,25 @@ async fn read_file_value(path: String) -> Value {
 
 fn convert_str_to_value(path: String, contents: String) -> Value {
     if path.ends_with(".yaml") || path.ends_with(".yml") {
-        #[cfg(not(feature = "yaml"))]{
+        #[cfg(not(feature = "yaml"))]
+        {
             panic!("missing yaml feature for crate, please enable yaml feature")
         }
 
-        #[cfg(feature = "yaml")]{
-            let yaml: Value =
-                serde_yaml::from_str::<Value>(&contents).expect("YAML does not have correct format.");
+        #[cfg(feature = "yaml")]
+        {
+            let yaml: Value = serde_yaml::from_str::<Value>(&contents)
+                .expect("YAML does not have correct format.");
             yaml
         }
     } else if path.ends_with(".toml") {
-        #[cfg(not(feature = "toml"))]{
+        #[cfg(not(feature = "toml"))]
+        {
             panic!("missing toml feature for crate, please enable toml feature")
         }
 
-        #[cfg(feature = "toml")]{
+        #[cfg(feature = "toml")]
+        {
             let rsp: Value =
                 toml::from_str::<Value>(&contents).expect("TOML does not have correct format.");
             rsp
@@ -404,11 +409,13 @@ fn convert_str_to_value(path: String, contents: String) -> Value {
             serde_json::from_str(&contents).expect("JSON does not have correct format.");
         json
     } else if path.ends_with(".ron") {
-        #[cfg(not(feature = "ron"))]{
+        #[cfg(not(feature = "ron"))]
+        {
             panic!("missing ron feature for crate, please enable ron feature")
         }
 
-        #[cfg(feature = "ron")]{
+        #[cfg(feature = "ron")]
+        {
             let data = ron::de::from_str(&contents).expect("RON does not have correct format.");
             dbg!(contents.clone());
             data

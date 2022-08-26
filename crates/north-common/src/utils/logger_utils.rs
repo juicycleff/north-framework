@@ -3,7 +3,7 @@ use yansi::Paint;
 use log::{Level, LevelFilter, Metadata, Record};
 use log4rs::append::console::ConsoleAppender;
 use log4rs::append::file::FileAppender;
-use log4rs::config::{Appender, Root, Logger as LoggerRs};
+use log4rs::config::{Appender, Logger as LoggerRs, Root};
 use log4rs::encode::pattern::PatternEncoder;
 use log4rs::Config;
 
@@ -39,7 +39,9 @@ pub fn init_logger() {
         .build();
 
     let requests = FileAppender::builder()
-        .encoder(Box::new(PatternEncoder::new("[North] {h({d(%Y-%m-%d %H:%M:%S %z)})} {l} [{t}] - {m}{n}")))
+        .encoder(Box::new(PatternEncoder::new(
+            "[North] {h({d(%Y-%m-%d %H:%M:%S %z)})} {l} [{t}] - {m}{n}",
+        )))
         .build("log/requests.log")
         .unwrap();
 

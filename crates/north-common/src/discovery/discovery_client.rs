@@ -1,5 +1,5 @@
-use async_trait::async_trait;
 use crate::error::Error;
+use async_trait::async_trait;
 
 use crate::registry::service_instance::ServiceInstance;
 

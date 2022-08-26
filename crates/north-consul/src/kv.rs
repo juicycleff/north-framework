@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use async_trait::async_trait;
+use std::collections::HashMap;
 
 use crate::errors::Error;
 use crate::errors::Result;
@@ -47,29 +47,34 @@ impl KV for Client {
             Err(Error::from("Session flag is required to acquire lock"))
         }
     }
-    
+
     async fn delete(&self, key: &str, options: Option<&WriteOptions>) -> Result<(bool, WriteMeta)> {
         let path = format!("/v1/kv/{}", key);
         delete(&path, &self.config, HashMap::new(), options).await
     }
-    
+
     async fn get(
         &self,
         key: &str,
         options: Option<&QueryOptions>,
     ) -> Result<(Option<KVPair>, QueryMeta)> {
         let path = format!("/v1/kv/{}", key);
-        let x: Result<(Vec<KVPair>, QueryMeta)> = get(&path, &self.config, HashMap::new(), options).await;
+        let x: Result<(Vec<KVPair>, QueryMeta)> =
+            get(&path, &self.config, HashMap::new(), options).await;
         x.map(|r| (r.0.first().cloned(), r.1))
     }
-    
-    async fn list(&self, prefix: &str, o: Option<&QueryOptions>) -> Result<(Vec<KVPair>, QueryMeta)> {
+
+    async fn list(
+        &self,
+        prefix: &str,
+        o: Option<&QueryOptions>,
+    ) -> Result<(Vec<KVPair>, QueryMeta)> {
         let mut params = HashMap::new();
         params.insert(String::from("recurse"), String::from(""));
         let path = format!("/v1/kv/{}", prefix);
         get_vec(&path, &self.config, params, o).await
     }
-    
+
     async fn put(&self, pair: &KVPair, o: Option<&WriteOptions>) -> Result<(bool, WriteMeta)> {
         let mut params = HashMap::new();
         if let Some(i) = pair.Flags {
@@ -80,7 +85,7 @@ impl KV for Client {
         let path = format!("/v1/kv/{}", pair.Key);
         put_body(&path, Some(pair.Value.clone()), &self.config, params, o).await
     }
-    
+
     async fn release(&self, pair: &KVPair, o: Option<&WriteOptions>) -> Result<(bool, WriteMeta)> {
         let mut params = HashMap::new();
         if let Some(i) = pair.Flags {

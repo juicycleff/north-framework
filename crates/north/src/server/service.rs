@@ -7,9 +7,9 @@ use yansi::Paint;
 #[cfg(feature = "api-poem")]
 use {poem::IntoEndpoint, poem::Route, poem_openapi::OpenApi as PoemOpenApi};
 
-use north_common::registry::service_registry::ServiceRegistry;
 use crate::server::north::North;
 use crate::utils::boxed_connection::ArcArangoConnection;
+use north_common::registry::service_registry::ServiceRegistry;
 use north_common::utils::logger_utils::print_format;
 
 pub type BoxedServiceRegistry = Arc<dyn ServiceRegistry>;

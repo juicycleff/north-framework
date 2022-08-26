@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use async_trait::async_trait;
+use std::collections::HashMap;
 
 use serde_json::Value;
 
@@ -43,7 +43,11 @@ pub struct CARoot {
 pub trait ConnectCA {
     async fn ca_roots(&self, q: Option<&QueryOptions>) -> Result<(CARootList, QueryMeta)>;
     async fn ca_get_config(&self, q: Option<&QueryOptions>) -> Result<(CAConfig, QueryMeta)>;
-    async fn ca_set_config(&self, conf: &CAConfig, q: Option<&WriteOptions>) -> Result<((), WriteMeta)>;
+    async fn ca_set_config(
+        &self,
+        conf: &CAConfig,
+        q: Option<&WriteOptions>,
+    ) -> Result<((), WriteMeta)>;
 }
 
 #[async_trait]
@@ -60,17 +64,23 @@ impl ConnectCA for Client {
             &self.config,
             HashMap::new(),
             q,
-        ).await
+        )
+        .await
     }
 
     /// https://www.consul.io/api/connect/ca.html#update-ca-configuration
-    async fn ca_set_config(&self, conf: &CAConfig, q: Option<&WriteOptions>) -> Result<((), WriteMeta)> {
+    async fn ca_set_config(
+        &self,
+        conf: &CAConfig,
+        q: Option<&WriteOptions>,
+    ) -> Result<((), WriteMeta)> {
         put(
             "/v1/connect/ca/configuration",
             Some(conf),
             &self.config,
             HashMap::new(),
             q,
-        ).await
+        )
+        .await
     }
 }

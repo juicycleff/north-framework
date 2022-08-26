@@ -53,7 +53,10 @@ async fn session_destroy_test() {
 
     let created_session_entry_id = created_session_entry.ID.unwrap();
 
-    client.destroy(&created_session_entry_id, None).await.unwrap();
+    client
+        .destroy(&created_session_entry_id, None)
+        .await
+        .unwrap();
 
     assert_eq!(
         get_number_of_session_entries_with_matching_name(&client, &unique_test_identifier).await,

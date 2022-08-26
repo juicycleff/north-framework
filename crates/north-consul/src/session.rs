@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use async_trait::async_trait;
+use std::collections::HashMap;
 
 use crate::errors::Result;
 use crate::request::{get, put};
@@ -64,7 +64,8 @@ impl Session for Client {
             &self.config,
             HashMap::new(),
             options,
-        ).await
+        )
+        .await
     }
     async fn destroy(&self, id: &str, options: Option<&WriteOptions>) -> Result<(bool, WriteMeta)> {
         let path = format!("/v1/session/destroy/{}", id);
@@ -74,7 +75,8 @@ impl Session for Client {
             &self.config,
             HashMap::new(),
             options,
-        ).await
+        )
+        .await
     }
     async fn info(
         &self,
@@ -95,7 +97,7 @@ impl Session for Client {
         let path = format!("/v1/session/node/{}", node);
         get(&path, &self.config, HashMap::new(), options).await
     }
-    
+
     async fn renew(
         &self,
         id: &str,
@@ -108,6 +110,7 @@ impl Session for Client {
             &self.config,
             HashMap::new(),
             options,
-        ).await
+        )
+        .await
     }
 }

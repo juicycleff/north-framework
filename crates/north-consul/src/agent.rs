@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use async_trait::async_trait;
+use std::collections::HashMap;
 
 use crate::errors::Result;
 use crate::request::{get, put};
@@ -64,7 +64,9 @@ pub trait Agent {
 impl Agent for Client {
     /// https://www.consul.io/api/agent/check.html#list-checks
     async fn checks(&self) -> Result<HashMap<String, AgentCheck>> {
-        get("/v1/agent/checks", &self.config, HashMap::new(), None).await.map(|x| x.0)
+        get("/v1/agent/checks", &self.config, HashMap::new(), None)
+            .await
+            .map(|x| x.0)
     }
     /// https://www.consul.io/api/agent.html#list-members
     async fn members(&self, wan: bool) -> Result<AgentMember> {
@@ -72,7 +74,9 @@ impl Agent for Client {
         if wan {
             params.insert(String::from("wan"), String::from("1"));
         }
-        get("/v1/agent/members", &self.config, params, None).await.map(|x| x.0)
+        get("/v1/agent/members", &self.config, params, None)
+            .await
+            .map(|x| x.0)
     }
     /// https://www.consul.io/api/agent.html#reload-agent
     async fn reload(&self) -> Result<()> {
@@ -82,7 +86,8 @@ impl Agent for Client {
             &self.config,
             HashMap::new(),
             None,
-        ).await
+        )
+        .await
         .map(|x| x.0)
     }
 
@@ -104,10 +109,11 @@ impl Agent for Client {
             &self.config,
             params,
             None,
-        ).await
+        )
+        .await
         .map(|x| x.0)
     }
-    
+
     ///https://www.consul.io/api/agent.html#join-agent
     async fn join(&self, address: &str, wan: bool) -> Result<()> {
         let mut params = HashMap::new();
@@ -116,7 +122,9 @@ impl Agent for Client {
             params.insert(String::from("wan"), String::from("true"));
         }
         let path = format!("/v1/agent/join/{}", address);
-        put(&path, None as Option<&()>, &self.config, params, None).await.map(|x| x.0)
+        put(&path, None as Option<&()>, &self.config, params, None)
+            .await
+            .map(|x| x.0)
     }
 
     /// https://www.consul.io/api/agent.html#graceful-leave-and-shutdown
@@ -127,7 +135,8 @@ impl Agent for Client {
             &self.config,
             HashMap::new(),
             None,
-        ).await
+        )
+        .await
         .map(|x| x.0)
     }
 
@@ -139,7 +148,8 @@ impl Agent for Client {
             &self.config,
             HashMap::new(),
             None,
-        ).await
+        )
+        .await
         .map(|x| x.0)
     }
 }

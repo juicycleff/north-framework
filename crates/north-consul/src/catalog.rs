@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use async_trait::async_trait;
+use std::collections::HashMap;
 
 use crate::agent::{AgentCheck, AgentService};
 use crate::errors::Result;
@@ -112,7 +112,8 @@ impl Catalog for Client {
             &self.config,
             HashMap::new(),
             q,
-        ).await
+        )
+        .await
     }
 
     /// https://www.consul.io/api/catalog.html#deregister-entity
@@ -127,7 +128,8 @@ impl Catalog for Client {
             &self.config,
             HashMap::new(),
             q,
-        ).await
+        )
+        .await
     }
 
     /// https://www.consul.io/api/catalog.html#list-datacenters
@@ -137,14 +139,15 @@ impl Catalog for Client {
             &self.config,
             HashMap::new(),
             None,
-        ).await
+        )
+        .await
     }
 
     /// https://www.consul.io/api/catalog.html#list-nodes
     async fn nodes(&self, q: Option<&QueryOptions>) -> Result<(Vec<Node>, QueryMeta)> {
         get("/v1/catalog/nodes", &self.config, HashMap::new(), q).await
     }
-    
+
     async fn services(
         &self,
         q: Option<&QueryOptions>,

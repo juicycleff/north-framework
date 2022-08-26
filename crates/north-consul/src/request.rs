@@ -5,10 +5,10 @@ use std::str;
 use std::str::FromStr;
 use std::time::Instant;
 
-use reqwest::{Client as HttpClient, Body};
-use reqwest::RequestBuilder;
 use reqwest::header::HeaderValue;
+use reqwest::RequestBuilder;
 use reqwest::StatusCode;
+use reqwest::{Body, Client as HttpClient};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
@@ -31,7 +31,7 @@ pub async fn get_vec<R: DeserializeOwned>(
     let datacenter: Option<&String> = options
         .and_then(|o| o.datacenter.as_ref())
         .or_else(|| config.datacenter.as_ref());
-    
+
     if let Some(dc) = datacenter {
         params.insert(String::from("dc"), dc.to_owned());
     }
@@ -43,26 +43,32 @@ pub async fn get_vec<R: DeserializeOwned>(
             params.insert(String::from("wait"), format!("{}s", wait_time.as_secs()));
         }
     }
-    
+
     let url_str = format!("{}{}", config.address, path);
     let url =
         Url::parse_with_params(&url_str, params.iter()).chain_err(|| "Failed to parse URL")?;
     let start = Instant::now();
     let request_builder = add_config_options(config.http_client.get(url), &config);
     let result = request_builder.send().await;
-    let r = result.chain_err(|| "HTTP request to consul failed").unwrap();
-    
+    let r = result
+        .chain_err(|| "HTTP request to consul failed")
+        .unwrap();
+
     let x: Option<Result<u64>> =
         r.headers()
             .get("X-Consul-Index")
             .map(|bytes: &HeaderValue| -> Result<u64> {
-                let s = bytes.to_str().expect("Failed to parse valid UT8 for last index");
+                let s = bytes
+                    .to_str()
+                    .expect("Failed to parse valid UT8 for last index");
                 Ok(u64::from_str(s).expect("Failed to parse valid number for last index"))
             });
-    
+
     // let j = rsp.json().await.chain_err(|| "Failed to parse JSON").unwrap();
     let j = if r.status() != StatusCode::NOT_FOUND {
-        r.json().await.chain_err(|| "Failed to parse JSON response")?
+        r.json()
+            .await
+            .chain_err(|| "Failed to parse JSON response")?
     } else {
         Vec::new()
     };
@@ -70,7 +76,7 @@ pub async fn get_vec<R: DeserializeOwned>(
         Some(r) => (j, Some(r?)),
         None => (j, None),
     };
-    
+
     Ok((
         fx.0,
         QueryMeta {
@@ -89,7 +95,7 @@ pub async fn get<R: DeserializeOwned>(
     let datacenter: Option<&String> = options
         .and_then(|o| o.datacenter.as_ref())
         .or_else(|| config.datacenter.as_ref());
-    
+
     if let Some(dc) = datacenter {
         params.insert(String::from("dc"), dc.to_owned());
     }
@@ -101,29 +107,33 @@ pub async fn get<R: DeserializeOwned>(
             params.insert(String::from("wait"), format!("{}s", wait_time.as_secs()));
         }
     }
-    
+
     let url_str = format!("{}{}", config.address, path);
     let url =
         Url::parse_with_params(&url_str, params.iter()).chain_err(|| "Failed to parse URL")?;
     let start = Instant::now();
     let request_builder = add_config_options(config.http_client.get(url), &config);
     let result = request_builder.send().await;
-    
-    let r = result.chain_err(|| "HTTP request to consul failed").unwrap();
+
+    let r = result
+        .chain_err(|| "HTTP request to consul failed")
+        .unwrap();
     let x: Option<Result<u64>> =
         r.headers()
             .get("X-Consul-Index")
             .map(|bytes: &HeaderValue| -> Result<u64> {
-                let s = bytes.to_str().expect("Failed to parse valid UT8 for last index");
+                let s = bytes
+                    .to_str()
+                    .expect("Failed to parse valid UT8 for last index");
                 Ok(u64::from_str(s).expect("Failed to parse valid number for last index"))
             });
-    
+
     let j = r.json().await.chain_err(|| "Failed to parse JSON").unwrap();
     let fx = match x {
         Some(r) => (j, Some(r?)),
         None => (j, None),
     };
-    
+
     Ok((
         fx.0,
         QueryMeta {
@@ -202,18 +212,18 @@ async fn write_with_json_body<T: Serialize, R: DeserializeOwned, F>(
     options: Option<&WriteOptions>,
     req: F,
 ) -> Result<(R, WriteMeta)>
-    where
-        F: Fn(&HttpClient, Url) -> RequestBuilder,
+where
+    F: Fn(&HttpClient, Url) -> RequestBuilder,
 {
     let start = Instant::now();
     let datacenter: Option<&String> = options
         .and_then(|o| o.datacenter.as_ref())
         .or_else(|| config.datacenter.as_ref());
-    
+
     if let Some(dc) = datacenter {
         params.insert(String::from("dc"), dc.to_owned());
     }
-    
+
     let url_str = format!("{}{}", config.address, path);
     let url =
         Url::parse_with_params(&url_str, params.iter()).chain_err(|| "Failed to parse URL")?;
@@ -223,13 +233,13 @@ async fn write_with_json_body<T: Serialize, R: DeserializeOwned, F>(
     } else {
         builder
     };
-    
+
     let builder = add_config_options(builder, &config);
-    let result = builder
-        .send()
-        .await;
-    
-    let rsp = result.chain_err(|| "HTTP request to consul failed").unwrap();
+    let result = builder.send().await;
+
+    let rsp = result
+        .chain_err(|| "HTTP request to consul failed")
+        .unwrap();
     let j = rsp.json().await.chain_err(|| "Failed to parse JSON")?;
     Ok((
         j,
@@ -258,18 +268,18 @@ async fn write_with_body<T: Into<Body>, R: DeserializeOwned, F>(
     options: Option<&WriteOptions>,
     req: F,
 ) -> Result<(R, WriteMeta)>
-    where
-        F: Fn(&HttpClient, Url) -> RequestBuilder,
+where
+    F: Fn(&HttpClient, Url) -> RequestBuilder,
 {
     let start = Instant::now();
     let datacenter: Option<&String> = options
         .and_then(|o| o.datacenter.as_ref())
         .or_else(|| config.datacenter.as_ref());
-    
+
     if let Some(dc) = datacenter {
         params.insert(String::from("dc"), dc.to_owned());
     }
-    
+
     let url_str = format!("{}{}", config.address, path);
     let url =
         Url::parse_with_params(&url_str, params.iter()).chain_err(|| "Failed to parse URL")?;
@@ -280,12 +290,16 @@ async fn write_with_body<T: Into<Body>, R: DeserializeOwned, F>(
         builder
     };
     let builder = add_config_options(builder, &config);
-    let result = builder
-        .send()
-        .await;
-    
-    let rsp = result.chain_err(|| "HTTP request to consul failed").unwrap();
-    let j = rsp.json().await.chain_err(|| "Failed to parse JSON").unwrap();
+    let result = builder.send().await;
+
+    let rsp = result
+        .chain_err(|| "HTTP request to consul failed")
+        .unwrap();
+    let j = rsp
+        .json()
+        .await
+        .chain_err(|| "Failed to parse JSON")
+        .unwrap();
     Ok((
         j,
         WriteMeta {

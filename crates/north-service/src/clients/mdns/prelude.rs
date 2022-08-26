@@ -5,9 +5,9 @@ pub(crate) use north_common::registry::registration::Registration;
 pub(crate) use north_common::registry::service_instance::{IService, ServiceInstance};
 pub(crate) use north_common::registry::service_instance_state::ServiceInstanceState;
 
+pub(crate) use nanoid::nanoid;
 pub(crate) use north_common::discovery::heartbeat::HeartbeatOptions;
 pub(crate) use north_common::registry::service_registry_builder::RegistrationBuilder;
-pub(crate) use nanoid::nanoid;
 
 pub(crate) use crate::clients::base_client::ReactiveClient;
 pub(crate) use async_trait::async_trait;
