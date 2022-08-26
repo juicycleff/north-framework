@@ -3,10 +3,15 @@ extern crate serde;
 extern crate core;
 extern crate serde_json;
 
-pub mod prelude;
-pub mod server;
+mod server;
 
+pub mod prelude;
 pub mod helper;
 pub mod utils;
-
 pub use self::utils::server_utils::NorthResult;
+
+pub use {
+    self::server::error::{Error, ErrorResponse},
+    self::server::service::{NorthServiceOptions},
+    self::server::north::{North, power},
+};
