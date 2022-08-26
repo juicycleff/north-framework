@@ -12,10 +12,7 @@ use {
     poem_openapi::{OpenApi as PoemOpenAPi, OpenApiService},
 };
 
-// #[cfg(feature = "registry-consul")]
-// use crate::clients::consul::registry::consul_service_registry::ConsulServiceRegistry;
-
-use crate::server::service::NorthServiceBuilder;
+use crate::server::service::{NorthServiceBuilder};
 use crate::utils::boxed_connection::ArcArangoConnection;
 use north_common::utils::logger_utils::init_logger;
 
@@ -27,8 +24,8 @@ use north_common::utils::logger_utils::init_logger;
 /// ```rust
 ///
 /// use poem_openapi::{payload::PlainText, OpenApi};
-/// use north::server::north::power;
-/// use north::server::service::NorthServiceBuilderTrait;
+/// use north::power;
+/// use north::NorthServiceBuilderTrait;
 ///
 /// #[derive(Default)]
 /// pub struct Api;

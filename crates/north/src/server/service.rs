@@ -272,7 +272,8 @@ impl<T: PoemOpenApi> NorthServiceBuilderTrait<T> for NorthServiceBuilder<T> {
     }
 }
 
-pub fn print_server_info(opts: NorthServiceOptions) {
+#[allow(dead_code)]
+pub(crate) fn print_server_info(opts: &NorthServiceOptions) {
     println!(
         "{}",
         Paint::default("North Configuration")
@@ -280,10 +281,10 @@ pub fn print_server_info(opts: NorthServiceOptions) {
             .underline()
             .blink()
     );
-    print_format("name", opts.name.unwrap().as_str());
-    print_format("version", opts.version.unwrap().as_str());
-    print_format("address", opts.address.unwrap().as_str());
-    print_format("port", opts.port.unwrap().to_string().as_str());
+    print_format("name", opts.name.as_ref().unwrap().as_str());
+    print_format("version", opts.version.as_ref().unwrap().as_str());
+    print_format("address", opts.address.as_ref().unwrap().as_str());
+    print_format("port", opts.port.as_ref().unwrap().to_string().as_str());
     print_format("keep alive", opts.keep_alive.to_string().as_str());
     print_format(
         "read timeout",
