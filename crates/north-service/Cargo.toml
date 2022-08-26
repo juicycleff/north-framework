@@ -22,7 +22,7 @@ categories = [
 [features]
 registry-consul = ["north-consul"]
 registry-local = ["async-zeroconf"]
-default = ["registry-local"]
+default = []
 
 [dependencies]
 async-trait = "0.1"
