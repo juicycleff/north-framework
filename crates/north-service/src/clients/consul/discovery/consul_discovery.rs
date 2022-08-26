@@ -79,11 +79,11 @@ impl DiscoveryClient<ConsulServiceInstance> for ConsulDiscoveryClient {
         "ConsulClient Discovery Client".into()
     }
 
-    async fn get_instances(self, service_id: String) -> NorthResult<Vec<ConsulServiceInstance>> {
+    async fn get_instances(self, service_id: String) -> Result<Vec<ConsulServiceInstance>, Error> {
         Ok(self.add_instances_to_list(service_id.as_str()).await)
     }
 
-    async fn get_all_instances(self) -> NorthResult<Vec<ConsulServiceInstance>> {
+    async fn get_all_instances(self) -> Result<Vec<ConsulServiceInstance>, Error> {
         let services = self.clone().get_services().await.unwrap();
 
         let mut result: Vec<ConsulServiceInstance> = vec![];
@@ -100,7 +100,7 @@ impl DiscoveryClient<ConsulServiceInstance> for ConsulDiscoveryClient {
         Ok(result)
     }
 
-    async fn get_services(self) -> NorthResult<Vec<String>> {
+    async fn get_services(self) -> Result<Vec<String>, Error> {
         let (service_nodes, _meta) = self
             .consul
             .client()
