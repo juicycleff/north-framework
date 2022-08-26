@@ -1,4 +1,4 @@
-use crate::server::error::NorthError;
+use crate::server::error::Error;
 
 #[allow(dead_code)]
 pub(crate) async fn shutdown_signal() {
@@ -7,4 +7,4 @@ pub(crate) async fn shutdown_signal() {
         .expect("failed to install CTRL+C signal handler");
 }
 
-pub type NorthResult<T> = Result<T, NorthError>;
+pub type NorthResult<T> = Result<T, Error>;

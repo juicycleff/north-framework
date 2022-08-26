@@ -2,6 +2,8 @@
 members = [
     # Crates
     "crates/north",
+    "crates/north-service",
     "crates/north-config",
     "crates/north-consul",
+    "crates/north-common",
 ]

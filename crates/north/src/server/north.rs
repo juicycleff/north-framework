@@ -17,7 +17,7 @@ use {
 
 use crate::server::service::NorthServiceBuilder;
 use crate::utils::boxed_connection::ArcArangoConnection;
-use crate::utils::logger_utils::init_logger;
+use north_common::utils::logger_utils::init_logger;
 
 /// ## North
 /// HTTP and Websocket setup abstraction. It seeks to abstract away HTTP

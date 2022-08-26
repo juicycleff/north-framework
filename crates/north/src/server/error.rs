@@ -2,7 +2,7 @@ use futures::task::SpawnError;
 
 #[derive(Debug, derive_more::Display, PartialEq, Eq)]
 #[allow(dead_code)]
-pub enum NorthError {
+pub enum Error {
     BadRequest(String),
     BlockingError(String),
     CacheError(String),
@@ -32,60 +32,60 @@ pub struct ErrorResponse {
 
 /// Automatically convert NorthErrors to external Response Errors
 #[cfg(feature = "api-actix")]
-impl ResponseError for NorthError {
+impl ResponseError for Error {
     fn status_code(&self) -> StatusCode {
         match self {
-            NorthError::BadRequest(_error) => StatusCode::BAD_REQUEST,
-            NorthError::NotFound(_message) => StatusCode::NOT_FOUND,
-            NorthError::ValidationError(_errors) => StatusCode::UNPROCESSABLE_ENTITY,
-            NorthError::Unauthorized(_error) => StatusCode::UNAUTHORIZED,
-            NorthError::Conflict(_message) => StatusCode::CONFLICT,
-            NorthError::Gone(_errors) => StatusCode::GONE,
-            NorthError::PaymentRequired(_error) => StatusCode::PAYMENT_REQUIRED,
-            NorthError::PayloadTooLarge(_error) => StatusCode::PAYLOAD_TOO_LARGE,
-            NorthError::TooManyRequests(_error) => StatusCode::TOO_MANY_REQUESTS,
+            Error::BadRequest(_error) => StatusCode::BAD_REQUEST,
+            Error::NotFound(_message) => StatusCode::NOT_FOUND,
+            Error::ValidationError(_errors) => StatusCode::UNPROCESSABLE_ENTITY,
+            Error::Unauthorized(_error) => StatusCode::UNAUTHORIZED,
+            Error::Conflict(_message) => StatusCode::CONFLICT,
+            Error::Gone(_errors) => StatusCode::GONE,
+            Error::PaymentRequired(_error) => StatusCode::PAYMENT_REQUIRED,
+            Error::PayloadTooLarge(_error) => StatusCode::PAYLOAD_TOO_LARGE,
+            Error::TooManyRequests(_error) => StatusCode::TOO_MANY_REQUESTS,
             _ => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 
     fn error_response(&self) -> HttpResponse {
         match self {
-            NorthError::BadRequest(error) => {
+            Error::BadRequest(error) => {
                 HttpResponseBuilder::new(self.status_code()).body::<String>(error.into())
                 // HttpResponse::BadRequest().json(error.into())
             }
-            NorthError::NotFound(message) => {
+            Error::NotFound(message) => {
                 HttpResponseBuilder::new(self.status_code()).body::<String>(message.into())
                 // HttpResponse::NotFound().json(message.into())
             }
-            NorthError::ValidationError(errors) => {
+            Error::ValidationError(errors) => {
                 HttpResponseBuilder::new(self.status_code()).json(errors.to_vec())
                 // HttpResponse::UnprocessableEntity().json(errors.to_vec().into())
             }
-            NorthError::Unauthorized(error) => {
+            Error::Unauthorized(error) => {
                 HttpResponseBuilder::new(self.status_code()).body::<String>(error.into())
             }
-            NorthError::Conflict(message) => {
+            Error::Conflict(message) => {
                 HttpResponseBuilder::new(self.status_code()).body::<String>(message.into())
                 // HttpResponse::Conflict().json(message.into())
             }
-            NorthError::Gone(errors) => {
+            Error::Gone(errors) => {
                 HttpResponseBuilder::new(self.status_code()).body::<String>(errors.into())
                 // HttpResponse::Gone().json(errors.into())
             }
-            NorthError::PaymentRequired(error) => {
+            Error::PaymentRequired(error) => {
                 HttpResponseBuilder::new(self.status_code()).body::<String>(error.into())
                 // HttpResponse::PaymentRequired().json(error.into())
             }
-            NorthError::PayloadTooLarge(error) => {
+            Error::PayloadTooLarge(error) => {
                 HttpResponseBuilder::new(self.status_code()).body::<String>(error.into())
                 // HttpResponse::PayloadTooLarge().json(error.into())
             }
-            NorthError::TooManyRequests(error) => {
+            Error::TooManyRequests(error) => {
                 HttpResponseBuilder::new(self.status_code()).body::<String>(error.into())
                 // HttpResponse::TooManyRequests().json(error.into())
             }
-            NorthError::DatabaseError(error) => {
+            Error::DatabaseError(error) => {
                 HttpResponseBuilder::new(self.status_code()).body::<String>(error.into())
                 // HttpResponse::TooManyRequests().json(error.into())
             }
@@ -118,22 +118,22 @@ impl From<Vec<String>> for ErrorResponse {
 // }
 
 /// Convert std::io::Error to NorthErrors
-impl From<std::io::Error> for NorthError {
-    fn from(error: std::io::Error) -> NorthError {
-        NorthError::InternalServerError(error.to_string())
+impl From<std::io::Error> for Error {
+    fn from(error: std::io::Error) -> Error {
+        Error::InternalServerError(error.to_string())
     }
 }
 
 /// Convert serde_yaml::Error to NorthErrors
-impl From<serde_yaml::Error> for NorthError {
-    fn from(error: serde_yaml::Error) -> NorthError {
-        NorthError::InternalServerError(error.to_string())
+impl From<serde_yaml::Error> for Error {
+    fn from(error: serde_yaml::Error) -> Error {
+        Error::InternalServerError(error.to_string())
     }
 }
 
 /// Convert SpawnError to NorthErrors
-impl From<SpawnError> for NorthError {
-    fn from(error: SpawnError) -> NorthError {
-        NorthError::InternalServerError(error.to_string())
+impl From<SpawnError> for Error {
+    fn from(error: SpawnError) -> Error {
+        Error::InternalServerError(error.to_string())
     }
 }
