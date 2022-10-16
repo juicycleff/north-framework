@@ -22,14 +22,11 @@ jobs:
           target/
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-    - name: Setup Cargo Make
-      run: cargo install --force cargo-make
-
     - name: Run Lint
-      run: cargo make lint
+      run: cargo clippy
 
     - name: Run Tests
-      run: cargo make test
+      run: cargo test
 
   Publish:
     runs-on: ubuntu-latest
