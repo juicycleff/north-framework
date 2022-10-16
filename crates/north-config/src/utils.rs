@@ -13,7 +13,7 @@ pub(crate) fn preamble() {
 
 /// Some North config preamble that setup env var from file
 pub(crate) fn import_env_vars(file_path: &str) {
-    let path_buf = std::env::var("CARGO_MANIFEST_DIR").unwrap_or(".".to_string());
+    let path_buf = std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string());
     let path = format!("{}/{}", path_buf, file_path);
 
     if path_exists(path.as_str()) {

@@ -216,7 +216,7 @@ where
     T: Clone + de::DeserializeOwned,
 {
     let mut current_value = Value::default();
-    let cargo_path = std::env::var("CARGO_MANIFEST_DIR").unwrap_or("./".to_string());
+    let cargo_path = std::env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| "./".to_string());
 
     #[cfg(debug_assertions)]
     let is_release = false;
@@ -228,14 +228,14 @@ where
         match s {
             ConfigSource::Env(env_opt) => {
                 let value = resolve_env_source(env_opt);
-                if value.is_some() {
-                    current_value.merge(value.unwrap());
+                if let Some(v) = value {
+                    current_value.merge(v);
                 }
             }
             ConfigSource::File(original_path) => {
                 let value = resolve_file_source(cargo_path.clone(), original_path, is_release);
-                if value.is_some() {
-                    current_value.merge(value.unwrap());
+                if let Some(v) = value {
+                    current_value.merge(v);
                 }
             }
         };
@@ -322,10 +322,10 @@ fn resolve_file_source(
 
 /// converts env vars to nested rust struct
 fn process_envs(option: EnvSourceOptions) -> Result<Value, Error> {
-    let temp_prefix = option.prefix.unwrap_or("NORTH".to_string());
+    let temp_prefix = option.prefix.unwrap_or_else(|| "NORTH".to_string());
     let prefix: &str = temp_prefix.as_str();
 
-    let nested_separator = option.nested_separator.unwrap_or("__".to_string());
+    let nested_separator = option.nested_separator.unwrap_or_else(|| "__".to_string());
     let separator: &str = nested_separator.as_str();
 
     let case: Case = option.key_case.unwrap_or(Case::Snake);
@@ -347,7 +347,7 @@ fn process_envs(option: EnvSourceOptions) -> Result<Value, Error> {
             }
         }
 
-        let _ = obj.dot_set(dot_key.as_str(), value).unwrap();
+        obj.dot_set(dot_key.as_str(), value).unwrap();
     }
 
     Ok(obj)
