@@ -1194,7 +1194,7 @@ dependencies = [
 
 [[package]]
 name = "north"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "aragog",
  "async-trait",

@@ -1891,6 +1891,22 @@ dependencies = [
 [[package]]
 name = "north-consul"
 version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6c90275c5a2a45bcf674507ac9736cf56425961f3bb869c235e4185f9c2c3bdc"
+dependencies = [
+ "async-trait",
+ "error-chain",
+ "log",
+ "reqwest",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "url",
+]
+
+[[package]]
+name = "north-consul"
+version = "0.0.2"
 dependencies = [
  "async-trait",
  "base64 0.13.0",
@@ -1909,22 +1925,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "north-consul"
-version = "0.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c90275c5a2a45bcf674507ac9736cf56425961f3bb869c235e4185f9c2c3bdc"
-dependencies = [
- "async-trait",
- "error-chain",
- "log",
- "reqwest",
- "serde",
- "serde_derive",
- "serde_json",
- "url",
-]
-
-[[package]]
 name = "north-service"
 version = "0.1.0"
 dependencies = [
@@ -1933,7 +1933,7 @@ dependencies = [
  "log",
  "nanoid",
  "north-common 0.0.1",
- "north-consul 0.0.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "north-consul 0.0.1",
 ]
 
 [[package]]

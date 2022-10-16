@@ -43,7 +43,7 @@ use north_common::utils::logger_utils::init_logger;
 ///         .port(8000)
 ///         .api("/", Api)
 ///         .build();
-///    power(service).start().await;
+///    north::power(service).up();
 ///    Ok(())
 /// }
 /// ```
@@ -59,15 +59,16 @@ pub fn new_service() -> NorthServiceBuilder
     NorthServiceBuilder::default()
 }
 
+/// Prepares the north api service
+pub fn power(service: NorthService) -> North {
+    init_logger();
+    North {
+        service,
+    }
+}
+
 /// implementation for `North` with `NorthService` integration
 impl North {
-    /// Prepares the north api service
-    pub fn power(service: NorthService) -> North {
-        init_logger();
-        North {
-            service,
-        }
-    }
 
     #[cfg(feature = "api-poem")]
     pub async fn up(self) -> std::io::Result<()> {

@@ -12,5 +12,5 @@ pub use self::utils::server_utils::NorthResult;
 pub use {
     self::server::error::{Error, ErrorResponse},
     self::server::service::{NorthServiceOptions, NorthServiceBuilderTrait},
-    self::server::north::{North, new_service},
+    self::server::north::{North, new_service, power},
 };

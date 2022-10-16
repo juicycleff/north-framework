@@ -14,6 +14,6 @@ pub async fn main() -> std::io::Result<()> {
         .api("api", Api)
         .build();
 
-    north::North::power(service).up().await
+    north::power(service).up().await
     //#endregion
 }
