@@ -1,19 +1,13 @@
-use poem::listener::Listener;
-use poem::Route;
-
 #[cfg(feature = "api-poem")]
 use {
     poem::{
-        listener::acme::{AutoCert, LETS_ENCRYPT_PRODUCTION},
         listener::TcpListener,
         middleware::{TokioMetrics, Tracing},
         EndpointExt,
     },
-    poem_openapi::{OpenApi as PoemOpenAPi, OpenApiService},
 };
 
-use crate::server::service::{NorthServiceBuilder};
-use crate::utils::boxed_connection::ArcArangoConnection;
+use crate::server::service::{NorthServiceBuilder, NorthService};
 use north_common::utils::logger_utils::init_logger;
 
 /// ## North
@@ -24,10 +18,10 @@ use north_common::utils::logger_utils::init_logger;
 /// ```rust
 ///
 /// use poem_openapi::{payload::PlainText, OpenApi};
-/// use north::power;
+/// use north::{new_service};
 /// use north::NorthServiceBuilderTrait;
 ///
-/// #[derive(Default)]
+/// #[derive(Default, Clone)]
 /// pub struct Api;
 ///
 /// #[OpenApi]
@@ -41,131 +35,55 @@ use north_common::utils::logger_utils::init_logger;
 ///#[tokio::main]
 ///pub async fn main() -> std::io::Result<()> {
 ///     // _server.await; // should uncomment this line
-///     let north_app = power::<Api>()
+///     let service = new_service()
 ///         .graceful_shutdown()
 ///         .address("localhost")
 ///         .name("Example Service")
 ///         .path_prefix("/api")
 ///         .port(8000)
-///         .api(Api)
-///         .up();
-///    north_app.start();
+///         .api("/", Api)
+///         .build();
+///    power(service).start().await;
 ///    Ok(())
 /// }
 /// ```
 ///
-#[derive(Default)]
-pub struct North<T>
-where
-    T: PoemOpenAPi,
-{
-    pub service: NorthServiceBuilder<T>,
+pub struct North {
+    pub(crate) service: NorthService,
 }
 
 /// Prepares the north api service
-pub fn power<T>() -> NorthServiceBuilder<T>
-where
-    T: PoemOpenAPi,
+pub fn new_service() -> NorthServiceBuilder
 {
     init_logger();
     NorthServiceBuilder::default()
 }
 
-/// Implementation for `North` with `NorthService` integration
-impl<T: PoemOpenAPi + 'static> North<T> {
+/// implementation for `North` with `NorthService` integration
+impl North {
+    /// Prepares the north api service
+    pub fn power(service: NorthService) -> North {
+        init_logger();
+        North {
+            service,
+        }
+    }
+
     #[cfg(feature = "api-poem")]
-    pub async fn start(self) -> std::io::Result<()> {
-        // prepare url
+    pub async fn up(self) -> std::io::Result<()> {
         let full_addr = format!(
             "{}:{}",
             self.service.options.address.clone().unwrap(),
             self.service.options.port.unwrap(),
         );
-        let mut prefix = self.service.options.path_prefix.clone().unwrap();
-        if prefix.starts_with('/') {
-            prefix = prefix.strip_prefix('/').unwrap().to_string();
-        };
-        let docs_full_addr = format!("http://{}/{}", full_addr, prefix);
 
         let main_metrics = TokioMetrics::new();
+        let app = self.service.poem_app;
 
-        let api_service = OpenApiService::new(
-            self.service.api.unwrap(),
-            self.service
-                .options
-                .name
-                .unwrap_or_else(|| "Docs".to_string()),
-            self.service.options.version.unwrap(),
-        )
-        .server(docs_full_addr);
-
-        if self.service.options.registry.is_some() {
-            let reg = self.service.options.registry.unwrap();
-            reg.register().await;
-            // arc_runtime.block_on(reg.register());
-            // self.service.poem_app.data::<BoxedServiceRegistry>(reg);
-        }
-
-        let ui = api_service.swagger_ui();
-
-        if self.service.options.auto_acme {
-            let auto_cert = AutoCert::builder()
-                .directory_url(LETS_ENCRYPT_PRODUCTION)
-                .domain(self.service.options.address.clone().unwrap())
-                .build()?;
-
-            return poem::Server::new(TcpListener::bind(full_addr).acme(auto_cert))
-                .run(
-                    self.service
-                        .poem_app
-                        .at("/metrics/default", main_metrics.exporter())
-                        .nest(prefix, api_service)
-                        .nest("/docs", ui)
-                        .with(Tracing),
-                )
-                .await;
-        }
-
-        let app = self
-            .service
-            .poem_app
-            .at("/metrics/default", main_metrics.exporter())
-            .nest(prefix, api_service)
-            .nest("/docs", ui);
-
-        run_app(self.service.db_connection, app, full_addr).await
+        poem::Server::new(TcpListener::bind(full_addr))
+            .run(app.at("/metrics/default", main_metrics.exporter()).with(Tracing))
+            .await
     }
-}
-
-#[cfg(feature = "db-arango")]
-async fn run_app(
-    db_connection: Option<ArcArangoConnection>,
-    app: Route,
-    full_addr: String,
-) -> std::io::Result<()> {
-    return match db_connection {
-        None => {
-            poem::Server::new(TcpListener::bind(full_addr))
-                .run(app.with(Tracing))
-                .await
-        }
-        Some(conn) => {
-            poem::Server::new(TcpListener::bind(full_addr))
-                .run(app.data(conn).with(Tracing))
-                .await
-        }
-    };
-}
-
-#[cfg(not(feature = "db-arango"))]
-async fn run_app(
-    db_connection: Option<ArcArangoConnection>,
-    app: Route,
-    full_addr: String,
-) -> std::io::Result<()> {
-    poem::Server::new(TcpListener::bind(full_addr))
-        .run(app.with(Tracing))
-        .await
 }
 
 #[cfg(test)]

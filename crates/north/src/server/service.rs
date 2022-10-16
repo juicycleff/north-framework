@@ -5,17 +5,23 @@ use aragog::DatabaseConnection;
 use std::sync::Arc;
 use yansi::Paint;
 #[cfg(feature = "api-poem")]
-use {poem::IntoEndpoint, poem::Route, poem_openapi::OpenApi as PoemOpenApi};
+use {
+    poem::{IntoEndpoint, Route},
+    poem_openapi::{OpenApi as PoemOpenApi, OpenApiService},
+};
 
-use crate::server::north::North;
 use crate::utils::boxed_connection::ArcArangoConnection;
 use north_common::registry::service_registry::ServiceRegistry;
 use north_common::utils::logger_utils::print_format;
 
 pub type BoxedServiceRegistry = Arc<dyn ServiceRegistry>;
 
+pub trait NorthApiTrait: PoemOpenApi + Sized + Clone {}
+
 /// A struct for service options. It holds the state for every created service
+#[derive(Clone)]
 pub struct NorthServiceOptions {
+    /// TCP address of servcer
     pub address: Option<String>,
     pub name: Option<String>,
     pub path_prefix: Option<String>,
@@ -27,11 +33,10 @@ pub struct NorthServiceOptions {
     pub keep_alive: u32,
     pub read_timeout: u32,
     pub write_timeout: u32,
-
     pub registry: Option<BoxedServiceRegistry>,
 }
 
-/// Default implementation for NorthServiceOptions
+/// default implementation for NorthServiceOptions
 impl Default for NorthServiceOptions {
     fn default() -> Self {
         NorthServiceOptions {
@@ -51,34 +56,39 @@ impl Default for NorthServiceOptions {
     }
 }
 
+
+pub struct NorthService {
+    pub options: Box<NorthServiceOptions>,
+
+    #[cfg(feature = "api-poem")]
+    pub poem_app: Box<Route>,
+}
+
 /// NorthService struct for constructing a North service
-pub struct NorthServiceBuilder<T>
-where
-    T: PoemOpenApi,
-{
-    pub(crate) options: NorthServiceOptions,
+pub struct NorthServiceBuilder {
+    pub(crate) options: Box<NorthServiceOptions>,
 
     #[cfg(feature = "api-poem")]
-    pub poem_app: Route,
+    pub(crate) poem_app: Box<Route>,
 
     #[cfg(feature = "api-poem")]
-    pub(crate) api: Option<T>,
+    pub(crate) custom_poem_app: Option<Box<Route>>,
 
     #[cfg(feature = "db-arango")]
     pub(crate) db_connection: Option<ArcArangoConnection>,
 }
 
-impl<T> Default for NorthServiceBuilder<T>
-where
-    T: PoemOpenApi,
+impl  Default for NorthServiceBuilder
 {
     fn default() -> Self {
         NorthServiceBuilder {
-            options: Default::default(),
+            options: Box::new(Default::default()),
+
             #[cfg(feature = "api-poem")]
-            poem_app: Route::new(),
+            poem_app: Box::new(Route::new()),
+
             #[cfg(feature = "api-poem")]
-            api: None,
+            custom_poem_app: None,
 
             #[cfg(feature = "db-arango")]
             db_connection: None,
@@ -87,28 +97,19 @@ where
 }
 
 /// A trait for implementing north service
-pub trait NorthServiceBuilderTrait<T>
-where
-    T: PoemOpenApi,
-{
-    // type Output;
-
+pub trait NorthServiceBuilderTrait {
     /// takes in a handler function
     #[cfg(feature = "api-poem")]
-    fn handler<E>(self, path: impl AsRef<str>, ep: E) -> Self
+    fn handler<E>(self, path: impl AsRef<str>, ep: E) ->  Self
     where
         E: IntoEndpoint,
         E::Endpoint: 'static;
 
-    /// takes in a FnOnce(&mut web::ServiceConfig) function
-    #[cfg(feature = "api-actix")]
-    fn router(self, f: Box<dyn Fn(&mut ServiceConfig) + Send + Sync + 'static>) -> Self;
-
     /// takes in the version of the service
-    fn version(self, version: &str) -> Self;
+    fn version(self, version: &str) ->  Self;
 
     /// takes in the name of the service
-    fn name(self, name: &str) -> Self;
+    fn name(self, name: &str) ->  Self;
 
     /// prefix to add to all route paths
     fn path_prefix(self, path: &str) -> Self;
@@ -131,9 +132,13 @@ where
     fn wrapper(self) -> Self;
 
     #[cfg(feature = "api-poem")]
-    fn api(self, api: T) -> Self;
+    fn custom_http_server(self, app: Route) -> Self;
 
     #[cfg(feature = "api-poem")]
+    fn api<T>(self, path: &str, api: T) -> Self
+    where
+        T: PoemOpenApi + Clone + 'static;
+
     fn with_swagger(self, enable_swagger: bool) -> Self;
 
     /// Add a database connection to the state
@@ -141,50 +146,49 @@ where
     fn with_database(self, db_connection: Arc<DatabaseConnection>) -> Self;
 
     /// Enable auto SSL with lets encrypt acme
-    #[cfg(feature = "api-poem")]
     fn with_auto_acme(self, enable_acme: bool) -> Self;
 
     fn service_registry(self, registry: BoxedServiceRegistry) -> Self;
 
     /// Used to pass state or context through to the handlers
-    fn context<K: Send + Sync>(self, data: K) -> Self;
+    #[cfg(feature = "api-poem")]
+    fn data<T: Clone + Send + Sync + 'static>(self, data: T) -> Self;
 
     /// Gracefully shutdown when the SIGTERM is called
     fn graceful_shutdown(self) -> Self;
+
+    fn build(self) -> NorthService;
 }
 
-impl<T> NorthServiceBuilder<T>
-where
-    T: PoemOpenApi,
-{
-    #[cfg(feature = "api-actix")]
-    pub fn configure<F>(self, _f: F) -> Self
-    where
-        F: Fn(&mut ServiceConfig) + Send + Sync + 'static,
-    {
-        // self.router.borrow_mut().push(Box::new(f));
-        self
+impl NorthServiceBuilder {
+    pub(crate) fn app_prefix(&self) -> String {
+        let mut prefix = self.options.path_prefix.clone().unwrap();
+        if prefix.starts_with('/') {
+            prefix = prefix.strip_prefix('/').unwrap().to_string();
+        };
+        prefix
     }
 
-    pub fn up(self) -> North<T> {
-        North { service: self }
+    pub(crate) fn full_address(&self) -> String {
+        let full_addr = format!(
+            "{}:{}",
+            self.options.address.clone().unwrap(),
+            self.options.port.unwrap(),
+        );
+        format!("http://{}/{}", full_addr, self.app_prefix())
     }
 }
 
 /// implement service trait for north service
-impl<T: PoemOpenApi> NorthServiceBuilderTrait<T> for NorthServiceBuilder<T> {
-    #[cfg(feature = "api-poem")]
+#[cfg(feature = "api-poem")]
+impl NorthServiceBuilderTrait for NorthServiceBuilder {
     fn handler<E>(self, _path: impl AsRef<str>, _ep: E) -> Self
     where
         E: IntoEndpoint,
         E::Endpoint: 'static,
     {
-        todo!()
-    }
-
-    #[cfg(feature = "api-actix")]
-    fn router(self, _f: Box<dyn Fn(&mut ServiceConfig) + Send + Sync + 'static>) -> Self {
-        todo!()
+        // self.poem_app.nest(path, ep);
+        self
     }
 
     fn version(mut self, version: &str) -> Self {
@@ -232,8 +236,29 @@ impl<T: PoemOpenApi> NorthServiceBuilderTrait<T> for NorthServiceBuilder<T> {
         todo!("Implement wrapper method")
     }
 
-    fn api(mut self, api: T) -> Self {
-        self.api = Some(api);
+    fn custom_http_server(mut self, app: Route) -> Self {
+        self.custom_poem_app = Some(Box::new(app));
+        self
+    }
+
+    #[cfg(feature = "api-poem")]
+    fn api<T>(mut self, path: &str, api: T) -> Self
+        where
+            T: PoemOpenApi + Clone + 'static
+    {
+
+        let title = self.options.name.as_ref().unwrap().clone();
+        let version = self.options.version.as_ref().unwrap().clone();
+        let api_service = OpenApiService::new(
+            api,
+            title,
+            version,
+        ).server(self.full_address());
+
+        let ui = api_service.swagger_ui();
+        let prefix = self.app_prefix();
+        self.poem_app = Box::new(self.poem_app.nest(format!("{prefix}{}", path), api_service)
+            .nest("/docs", ui));
         self
     }
 
@@ -244,9 +269,7 @@ impl<T: PoemOpenApi> NorthServiceBuilderTrait<T> for NorthServiceBuilder<T> {
 
     #[cfg(feature = "db-arango")]
     fn with_database(mut self, db_connection: Arc<DatabaseConnection>) -> Self {
-        self.db_connection = Some(ArcArangoConnection {
-            connection: db_connection,
-        });
+        self.db_connection = Some(ArcArangoConnection{connection: db_connection});
         self
     }
 
@@ -261,14 +284,22 @@ impl<T: PoemOpenApi> NorthServiceBuilderTrait<T> for NorthServiceBuilder<T> {
         self
     }
 
-    fn context<K: Send + Sync>(self, _data: K) -> Self {
-        // self.router_builder.data(data);
+    #[cfg(feature = "api-poem")]
+    fn data<T: Clone + Send + Sync + 'static>(self, _data: T) -> Self {
+        // &self.poem_app.data(data);
         self
     }
 
     fn graceful_shutdown(mut self) -> Self {
         self.options.graceful_shutdown = true;
         self
+    }
+
+    fn build(self) -> NorthService {
+        NorthService {
+            options: self.options.clone(),
+            poem_app: self.custom_poem_app.unwrap_or(self.poem_app)
+        }
     }
 }
 

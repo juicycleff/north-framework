@@ -5,15 +5,15 @@ use north::NorthServiceBuilderTrait;
 #[tokio::main]
 pub async fn main() -> std::io::Result<()> {
     //#region Setup Server
-    let north_app = north::power::<Api>()
+    let service = north::new_service()
         .graceful_shutdown()
         .address("localhost")
         .name("Basic App")
         .path_prefix("/api")
         .port(8000)
-        .api(Api)
-        .up();
+        .api("api", Api)
+        .build();
 
-    north_app.start().await
+    north::North::power(service).up().await
     //#endregion
 }

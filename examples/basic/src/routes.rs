@@ -1,6 +1,6 @@
 use poem_openapi::{payload::PlainText, OpenApi};
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Api;
 
 #[OpenApi]
