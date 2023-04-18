@@ -1,6 +1,6 @@
 [package]
 name = "north-config"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 authors = ["Rex Raphael <rex.raphael@outlook.com>"]
 description = "North config is a multi source configuration crate designed as part of the North Microservice Framework"
@@ -20,18 +20,24 @@ yaml = ["serde_yaml"]
 default = []
 
 [dependencies]
-serde = { version = "1.0", features = ["derive"] }
-serde_json = { version = "1.0"}
-log = "0.4.14"
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+log = { workspace = true }
 dotenvy = "0.15"
 econf = "0.2.1"
+notify = "5.0"
 json_dotpath = "1.1"
-convert_case = "0.5"
+convert_case = "0.6"
+async-trait = { version = "0.1" }
 
-tokio = { version = "1.18", optional = true, features = ["fs", "io-util"] }
+tokio = { workspace = true, optional = true, features = ["fs", "io-util"] }
 async-std = { version = "1.12", optional = true }
 
-serde_yaml = { version = "0.8", optional = true }
+serde_yaml = { workspace = true, optional = true }
 ron = { version ="0.8", optional = true }
 toml = { version ="0.5", optional = true }
 
+
+[dev-dependencies]
+tokio-test = "0.4"
+envmnt = "0.10.4"

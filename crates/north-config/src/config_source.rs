@@ -1,3 +1,4 @@
+use std::fmt::{Debug, Formatter};
 use crate::serde_utils::Merge;
 use convert_case::Casing;
 use json_dotpath::DotPaths;
@@ -7,15 +8,58 @@ use std::path::PathBuf;
 
 #[cfg(not(any(feature = "tokio", feature = "async-std")))]
 use std::io::Read;
+use std::sync::Arc;
+#[cfg(any(feature = "tokio", feature = "async-std"))]
+use async_trait::async_trait;
 
 use crate::error::Error;
 use crate::utils::{import_env_vars, preamble};
 pub use convert_case::Case;
 
-/// # ConfigSource
-///
-/// Describes the various sources for config that is supported
-/// Current supports file and env vars
+pub trait CustomConfigSourceClone {
+    fn clone_box(&self) -> Box<dyn CustomConfigSource>;
+}
+
+impl<T> CustomConfigSourceClone for T
+    where
+        T: 'static + CustomConfigSource + Clone + Debug,
+{
+    fn clone_box(&self) -> Box<dyn CustomConfigSource> {
+        Box::new(self.clone())
+    }
+}
+
+impl Clone for Box<dyn CustomConfigSource> {
+    fn clone(&self) -> Box<dyn CustomConfigSource> {
+        self.clone_box()
+    }
+}
+
+impl Debug for Box<dyn CustomConfigSource> {
+    fn fmt(&self, _f: &mut Formatter<'_>) -> std::fmt::Result {
+        Ok(())
+    }
+}
+
+/// Allows you provide custom config source. This can be through some API,
+/// client or even function.
+#[cfg(not(any(feature = "tokio", feature = "async-std")))]
+pub trait CustomConfigSource: CustomConfigSourceClone + Send + Sync {
+    /// This is the only implementable member.
+    /// Here you can return a serde value
+    fn get_config_value(&self) -> Result<Value, Error>;
+}
+
+/// Allows you provide custom config source. This can be through some API,
+/// client or even function.
+#[cfg(any(feature = "tokio", feature = "async-std"))]
+#[async_trait]
+pub trait CustomConfigSource: CustomConfigSourceClone + Send + Sync {
+    /// This is the only implementable member.
+    /// Here you can return a serde value
+    async fn get_config_value(&self) -> Result<Value, Error>;
+}
+
 #[derive(Debug, Clone)]
 pub enum ConfigSource {
     /// # Env
@@ -41,6 +85,9 @@ pub enum ConfigSource {
 
     /// loads a json, YAML, OR TOML file
     File(String),
+
+    /// loads a json, YAML, OR TOML file
+    Custom(Box<dyn CustomConfigSource>),
 }
 
 impl Default for ConfigSource {
@@ -88,6 +135,11 @@ pub struct EnvSourceOptions {
     ///
     /// @defaults to [None]
     pub env_file_path: Option<String>,
+
+    /// Enable datasource change watch (Only supports Env and File sources)
+    ///
+    /// @defaults to False
+    pub watch: bool
 }
 
 impl Default for EnvSourceOptions {
@@ -97,6 +149,7 @@ impl Default for EnvSourceOptions {
             nested_separator: Some("__".to_string()),
             key_case: Some(Case::Snake),
             env_file_path: None,
+            watch: false
         }
     }
 }
@@ -204,6 +257,19 @@ where
                     current_value.merge(value.unwrap());
                 }
             }
+            ConfigSource::Custom(source) => {
+                let rsp = source.get_config_value().await;
+                match rsp {
+                    Ok(value) => {
+                        if value.is_object() {
+                            current_value.merge(value);
+                        }
+                    }
+                    Err(_) => {
+                        println!("Custom config was not loaded")
+                    }
+                }
+            }
         };
     }
 
@@ -236,6 +302,19 @@ where
                 let value = resolve_file_source(cargo_path.clone(), original_path, is_release);
                 if let Some(v) = value {
                     current_value.merge(v);
+                }
+            }
+            ConfigSource::Custom(source) => {
+                let rsp = source.get_config_value();
+                match rsp {
+                    Ok(value) => {
+                        if value.is_object() {
+                            current_value.merge(value);
+                        }
+                    }
+                    Err(_) => {
+                        println!("Custom config was not loaded")
+                    }
                 }
             }
         };
@@ -341,8 +420,8 @@ fn process_envs(option: EnvSourceOptions) -> Result<Value, Error> {
         for sub_keys in new_key.split(separator) {
             if dot_key.is_empty() {
                 dot_key.push_str(sub_keys.to_case(case).as_str());
-                dot_key.push('.');
             } else {
+                dot_key.push('.');
                 dot_key.push_str(sub_keys.to_case(case).as_str());
             }
         }
@@ -436,13 +515,4 @@ fn read_file_value(path: String) -> Value {
     file.read_to_string(&mut contents).unwrap();
 
     convert_str_to_value(path, contents)
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
 }

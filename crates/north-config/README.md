@@ -31,7 +31,7 @@ fn main() {
     };
     let config = north_config::new_config::<DemoConfig>(config_options).await;
     let config = config.get_value();
-    
-    Ok()
+
+    Ok(())
 }
 ```
