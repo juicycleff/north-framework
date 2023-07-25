@@ -9,6 +9,7 @@ pub use {
     poem::{IntoEndpoint, Route, EndpointExt},
     poem_openapi::{OpenApi as PoemOpenApi, OpenApiService},
 };
+#[cfg(feature = "db-arango")]
 pub use crate::utils::boxed_connection::ArcArangoConnection;
 pub use north_common::{
     registry::service_registry::ServiceRegistry,
