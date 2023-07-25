@@ -1947,7 +1947,7 @@ checksum = "61807f77802ff30975e01f4f071c8ba10c022052f98b3294119f3e615d13e5be"
 
 [[package]]
 name = "north"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "aragog",
  "async-trait",
@@ -1956,8 +1956,7 @@ dependencies = [
  "hyper",
  "itertools 0.11.0",
  "mockall",
- "north-common 0.0.2",
- "north-derives",
+ "north-common 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "poem",
  "poem-openapi",
  "rstest",
@@ -1989,7 +1988,7 @@ dependencies = [
 
 [[package]]
 name = "north-common"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "async-trait",
  "chrono",
@@ -2004,8 +2003,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "north-config"
+name = "north-common"
 version = "0.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "38905c5732e7c0001e8335f4c8a0a8de9ddb3fe40b0e93e727d62cbc858fffdf"
+dependencies = [
+ "async-trait",
+ "chrono",
+ "log",
+ "log4rs",
+ "serde",
+ "serde_json",
+ "serde_yaml 0.9.10",
+ "syn 2.0.27",
+ "yansi",
+]
+
+[[package]]
+name = "north-config"
+version = "0.0.31"
 dependencies = [
  "async-std",
  "async-trait",
@@ -2043,7 +2059,7 @@ dependencies = [
 
 [[package]]
 name = "north-consul"
-version = "0.0.2"
+version = "0.0.3"
 dependencies = [
  "async-trait",
  "base64 0.13.0",
@@ -2063,9 +2079,9 @@ dependencies = [
 
 [[package]]
 name = "north-derives"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
- "north-common 0.0.2",
+ "north-common 0.0.3",
  "poem",
  "quote 1.0.32",
  "syn 1.0.99",
@@ -2073,7 +2089,7 @@ dependencies = [
 
 [[package]]
 name = "north-service"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "async-trait",
  "async-zeroconf",
