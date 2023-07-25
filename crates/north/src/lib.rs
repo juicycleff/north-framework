@@ -19,8 +19,8 @@ mod error;
 mod server;
 
 mod addr;
-mod helper;
 mod utils;
+pub mod helper;
 
 pub use self::utils::server_utils::print_server_info;
 pub use self::utils::server_utils::NorthResult;
