@@ -36,3 +36,6 @@ poem = { version = "1.3", features = ["sse", "compression", "cookie", "embed", "
 
 north-common = { path = "./crates/north-common" }
 north-derives = { path = "./crates/north-derives" }
+
+[patch.crates-io]
+aragog = {  git = "https://gitlab.com/juicycleff/aragog", branch = "master" }
