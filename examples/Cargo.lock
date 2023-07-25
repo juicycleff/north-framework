@@ -1157,6 +1157,7 @@ dependencies = [
  "futures",
  "itertools",
  "north-common",
+ "north-derives",
  "poem",
  "poem-openapi",
  "serde",
@@ -1183,6 +1184,18 @@ dependencies = [
  "serde_yaml 0.9.10",
  "syn 2.0.27",
  "yansi",
+]
+
+[[package]]
+name = "north-derives"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f772e7c3b91b6128d57f70a0ff475ab9f05e2de2e0c253974e3fd4edd363995b"
+dependencies = [
+ "north-common",
+ "poem",
+ "quote",
+ "syn 1.0.99",
 ]
 
 [[package]]

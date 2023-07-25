@@ -1955,6 +1955,7 @@ dependencies = [
  "itertools 0.11.0",
  "mockall",
  "north-common 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "north-derives 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "poem",
  "poem-openapi",
  "rstest",
@@ -2078,6 +2079,18 @@ dependencies = [
 [[package]]
 name = "north-derives"
 version = "0.1.1"
+dependencies = [
+ "north-common 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "poem",
+ "quote 1.0.32",
+ "syn 1.0.99",
+]
+
+[[package]]
+name = "north-derives"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f772e7c3b91b6128d57f70a0ff475ab9f05e2de2e0c253974e3fd4edd363995b"
 dependencies = [
  "north-common 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "poem",
