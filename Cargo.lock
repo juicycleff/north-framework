@@ -2080,7 +2080,7 @@ dependencies = [
 name = "north-derives"
 version = "0.1.1"
 dependencies = [
- "north-common 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "north-common 0.0.3",
  "poem",
  "quote 1.0.32",
  "syn 1.0.99",
