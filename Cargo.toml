@@ -2,8 +2,37 @@
 members = [
     # Crates
     "crates/north",
+    "crates/north-derives",
     "crates/north-service",
     "crates/north-config",
     "crates/north-consul",
     "crates/north-common",
+
+    "examples/basic"
 ]
+
+[workspace.dependencies]
+itertools = "0.11"
+async-trait = "0.1"
+tokio = { version = "1.18", features = ["full"] }
+futures = "0.3"
+yansi = "0.5"
+derive_more = "0.99"
+log4rs = "1"
+chrono = "0.4"
+tracing-subscriber = { version ="0.3.9", features = ["env-filter"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_derive = "1"
+serde_yaml = "0.9"
+mockall = "0.11"
+rstest = "0.18.1"
+rusty-hook = "^0.11"
+log = "0.4"
+tuple = "0.5.1"
+syn = { version= "2.0", features=["full","fold", "parsing"] }
+
+poem = { version = "1.3", features = ["sse", "compression", "cookie", "embed", "opentelemetry", "tokio-metrics", "tower-compat", "websocket", "acme", "redis-session", "prometheus", "rustls"] }
+
+north-common = { path = "./crates/north-common" }
+north-derives = { path = "./crates/north-derives" }

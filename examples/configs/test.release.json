@@ -1,0 +1,7 @@
+{
+  "host": "0.0.0.0",
+  "nested": {
+    "foo": "Well its foo",
+    "bar": "Bar is better"
+  }
+}

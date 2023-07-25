@@ -1,0 +1,4 @@
+host: localhost
+nested:
+  foo: "Foo Looks Good in Debug"
+  bar: "Bar is better in Debug"

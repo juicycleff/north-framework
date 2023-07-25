@@ -1,0 +1,2 @@
+host = "test"
+nested = { foo = "Foo Toml Release", bar = "Bar Toml Release" }

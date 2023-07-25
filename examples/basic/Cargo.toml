@@ -7,5 +7,5 @@ edition = "2021"
 
 [dependencies]
 tokio = { version = "1.18", features = ["full"] }
-poem-openapi = { version = "2.0.8", features = ["swagger-ui"] }
-north = { path = "../../crates/north" }
+poem-openapi = { version = "3.0.0", features = ["swagger-ui"] }
+north = { path = "../../crates/north", features = ["api-poem"] }

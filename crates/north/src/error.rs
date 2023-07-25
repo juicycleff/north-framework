@@ -1,3 +1,4 @@
+use std::net::AddrParseError;
 use futures::task::SpawnError;
 
 #[derive(Debug, derive_more::Display, PartialEq, Eq)]
@@ -134,6 +135,12 @@ impl From<serde_yaml::Error> for Error {
 /// Convert SpawnError to NorthErrors
 impl From<SpawnError> for Error {
     fn from(error: SpawnError) -> Error {
+        Error::InternalServerError(error.to_string())
+    }
+}
+/// Convert AddrParseError to NorthErrors
+impl From<AddrParseError> for Error {
+    fn from(error: AddrParseError) -> Error {
         Error::InternalServerError(error.to_string())
     }
 }
