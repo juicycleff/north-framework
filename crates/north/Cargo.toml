@@ -57,3 +57,7 @@ rusty-hook = { workspace = true }
 #version = "1"
 #default-features = false
 #features = ["prepush-hook", "run-for-all", "precommit-hook", "postmerge-hook", "run-cargo-clippy", "run-cargo-fmt"]
+
+
+[patch.crates-io]
+aragog = {  git = "https://gitlab.com/juicycleff/aragog", branch = "master" }
