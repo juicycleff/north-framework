@@ -25,4 +25,4 @@ syn = {version="1.0", features=["full","fold"]}
 quote = "1.0.8"
 poem = { workspace = true }
 
-north-common = { workspace = true }
+north-common = { version = "0.0.3" }
