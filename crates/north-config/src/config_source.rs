@@ -8,7 +8,6 @@ use std::path::PathBuf;
 
 #[cfg(not(any(feature = "tokio", feature = "async-std")))]
 use std::io::Read;
-use std::sync::Arc;
 #[cfg(any(feature = "tokio", feature = "async-std"))]
 use async_trait::async_trait;
 
