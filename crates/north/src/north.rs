@@ -9,7 +9,6 @@ use {
 use crate::service::{NorthServiceBuilder, NorthService};
 use north_common::utils::logger_utils::init_logger;
 
-#[cfg(feature = "db-arango")]
 use north_derives::process_poem;
 
 /// ## North
