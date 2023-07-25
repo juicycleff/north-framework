@@ -40,9 +40,9 @@ pub fn process_poem(input: TokenStream) -> TokenStream {
 }
 
 fn process_poem_impl(router: Ident, state: ExprArray) -> TokenStream {
-    println!("******************************");
-    println!("Helllo sdsd");
-    println!("******************************");
+    // println!("******************************");
+    // println!("Helllo sdsd");
+    // println!("******************************");
 
 
     // let assert_sync = quote_spanned! {ty.span()=>
@@ -50,7 +50,7 @@ fn process_poem_impl(router: Ident, state: ExprArray) -> TokenStream {
     // };
 
     for s in state.elems {
-        println!("Helllo yessss");
+        // println!("Helllo yessss");
     }
     let expanded = quote! {
         #router.with(AddData::new(""))
