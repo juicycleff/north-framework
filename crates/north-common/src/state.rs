@@ -5,8 +5,8 @@ pub trait NorthStateDataClone {
 }
 
 impl<T> NorthStateDataClone for T
-    where
-        T: 'static + NorthStateData + Clone,
+where
+    T: 'static + NorthStateData + Clone,
 {
     fn clone_box(&self) -> Box<dyn NorthStateData> {
         Box::new(self.clone())
@@ -19,5 +19,4 @@ impl Clone for Box<dyn NorthStateData> {
     }
 }
 
-pub trait NorthStateData: NorthStateDataClone + Send + Sync {
-}
+pub trait NorthStateData: NorthStateDataClone + Send + Sync {}

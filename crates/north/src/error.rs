@@ -1,5 +1,5 @@
-use std::net::AddrParseError;
 use futures::task::SpawnError;
+use std::net::AddrParseError;
 
 #[derive(Debug, derive_more::Display, PartialEq, Eq)]
 #[allow(dead_code)]

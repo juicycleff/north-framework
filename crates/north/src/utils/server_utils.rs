@@ -1,7 +1,7 @@
+use crate::error::Error;
+use crate::NorthServiceOptions;
 use north_common::utils::logger_utils::print_format;
 use yansi::Paint;
-use crate::NorthServiceOptions;
-use crate::error::Error;
 
 #[allow(dead_code)]
 pub(crate) async fn shutdown_signal() {
@@ -11,7 +11,6 @@ pub(crate) async fn shutdown_signal() {
 }
 
 pub type NorthResult<T> = Result<T, Error>;
-
 
 #[allow(dead_code)]
 pub fn print_server_info(opts: &NorthServiceOptions) {

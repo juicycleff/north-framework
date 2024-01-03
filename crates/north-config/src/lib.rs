@@ -10,17 +10,11 @@ pub(crate) mod watcher;
 
 pub use {
     self::config_source::{
-        new_config,
-        CustomConfigSource,
-        ConfigSource,
-        NorthConfig,
-        NorthConfigOptions,
-        Case,
-        EnvSourceOptions
+        new_config, Case, ConfigSource, CustomConfigSource, EnvSourceOptions, FileSourceOptions,
+        NorthConfig, NorthConfigOptions,
     },
     self::error::Error,
 };
-
 
 #[cfg(test)]
 mod tests {
@@ -60,9 +54,9 @@ mod tests {
     #[tokio::test]
     async fn reads_config_from_file_with_release_mode() {
         let config_options = NorthConfigOptions {
-            sources: vec![
-                ConfigSource::File("../../examples/configs/test.{{env}}.json".to_string()),
-            ],
+            sources: vec![ConfigSource::File(
+                "../../examples/configs/test.{{env}}.json".to_string(),
+            )],
         };
         let config = crate::new_config::<DemoConfig>(config_options).await;
         let config = config.get_value().clone();
@@ -74,9 +68,9 @@ mod tests {
     #[async_std::test]
     async fn reads_config_from_file_with_release_mode() {
         let config_options = NorthConfigOptions {
-            sources: vec![
-                ConfigSource::File("../../examples/configs/test.{{env}}.json".to_string()),
-            ],
+            sources: vec![ConfigSource::File(
+                "../../examples/configs/test.{{env}}.json".to_string(),
+            )],
         };
         let config = crate::new_config::<DemoConfig>(config_options).await;
         let config = config.get_value().clone();
@@ -88,9 +82,9 @@ mod tests {
     #[test]
     fn reads_config_from_file_with_release_mode() {
         let config_options = NorthConfigOptions {
-            sources: vec![
-                ConfigSource::File("../../examples/configs/test.{{env}}.json".to_string()),
-            ],
+            sources: vec![ConfigSource::File(
+                "../../examples/configs/test.{{env}}.json".to_string(),
+            )],
         };
         let config = crate::new_config::<DemoConfig>(config_options);
         let config = config.get_value().clone();
@@ -101,9 +95,9 @@ mod tests {
     #[tokio::test]
     async fn reads_config_from_file() {
         let config_options = NorthConfigOptions {
-            sources: vec![
-                ConfigSource::File("../../examples/configs/test.debug.json".to_string()),
-            ],
+            sources: vec![ConfigSource::File(
+                "../../examples/configs/test.debug.json".to_string(),
+            )],
         };
         let config = crate::new_config::<DemoConfig>(config_options).await;
         let config = config.get_value().clone();
@@ -115,9 +109,9 @@ mod tests {
     #[async_std::test]
     async fn reads_config_from_file() {
         let config_options = NorthConfigOptions {
-            sources: vec![
-                ConfigSource::File("../../examples/configs/test.debug.json".to_string()),
-            ],
+            sources: vec![ConfigSource::File(
+                "../../examples/configs/test.debug.json".to_string(),
+            )],
         };
         let config = crate::new_config::<DemoConfig>(config_options).await;
         let config = config.get_value().clone();
@@ -129,9 +123,9 @@ mod tests {
     #[test]
     fn reads_config_from_file() {
         let config_options = NorthConfigOptions {
-            sources: vec![
-                ConfigSource::File("../../examples/configs/test.debug.json".to_string()),
-            ],
+            sources: vec![ConfigSource::File(
+                "../../examples/configs/test.debug.json".to_string(),
+            )],
         };
         let config = crate::new_config::<DemoConfig>(config_options);
         let config = config.get_value().clone();
@@ -152,7 +146,6 @@ mod tests {
         let host = config.host.unwrap();
         assert_eq!(host, "0.0.0.0");
     }
-
 
     #[cfg(not(any(feature = "tokio", feature = "async-std")))]
     #[test]
@@ -246,9 +239,7 @@ mod tests {
         setup_env();
 
         let config_options = NorthConfigOptions {
-            sources: vec![
-                ConfigSource::Env(EnvSourceOptions::default()),
-            ],
+            sources: vec![ConfigSource::Env(EnvSourceOptions::default())],
         };
         let config = crate::new_config::<DemoConfig>(config_options);
         let config = config.get_value().clone();
@@ -272,9 +263,7 @@ mod tests {
         env_opts.prefix = Some("TESTNORTH".to_string());
 
         let config_options = NorthConfigOptions {
-            sources: vec![
-                ConfigSource::Env(env_opts),
-            ],
+            sources: vec![ConfigSource::Env(env_opts)],
         };
 
         let config = crate::new_config::<DemoConfig>(config_options);
@@ -295,9 +284,9 @@ mod tests {
     #[test]
     fn read_config_from_ron_source() {
         let config_options = NorthConfigOptions {
-            sources: vec![
-                ConfigSource::File("../../examples/configs/test.release.ron".to_string()),
-            ],
+            sources: vec![ConfigSource::File(
+                "../../examples/configs/test.release.ron".to_string(),
+            )],
         };
         let config = crate::new_config::<DemoConfig>(config_options);
         let config = config.get_value().clone();

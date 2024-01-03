@@ -1,13 +1,11 @@
-#[cfg(feature = "api-poem")]
-use {
-    poem::{
-        listener::TcpListener,
-        middleware::{TokioMetrics, Tracing, AddData},
-        EndpointExt,
-    },
-};
-use crate::service::{NorthServiceBuilder, NorthService};
+use crate::service::{NorthService, NorthServiceBuilder};
 use north_common::utils::logger_utils::init_logger;
+#[cfg(feature = "api-poem")]
+use poem::{
+    listener::TcpListener,
+    middleware::{AddData, TokioMetrics, Tracing},
+    EndpointExt,
+};
 
 use north_derives::process_poem;
 
@@ -55,7 +53,9 @@ pub struct North {
 
 /// Prepares the north api service
 #[cfg(feature = "api-poem")]
-pub fn new_service<T>() -> NorthServiceBuilder<T> where T: poem_openapi::OpenApi + Clone + 'static
+pub fn new_service<T>() -> NorthServiceBuilder<T>
+where
+    T: poem_openapi::OpenApi + Clone + 'static,
 {
     init_logger();
     NorthServiceBuilder::default()
@@ -64,16 +64,16 @@ pub fn new_service<T>() -> NorthServiceBuilder<T> where T: poem_openapi::OpenApi
 /// Prepares the north api service
 pub fn power(service: NorthService) -> North {
     init_logger();
-    North {
-        service,
-    }
+    North { service }
 }
 
 /// implementation for `North` with `NorthService` integration
 impl North {
     #[cfg(all(feature = "api-native", not(feature = "api-poem")))]
     pub async fn up(self) -> std::io::Result<()> {
-        crate::server::start_server(&self.service.options).await.unwrap();
+        crate::server::start_server(&self.service.options)
+            .await
+            .unwrap();
         Ok(())
     }
 
@@ -87,7 +87,9 @@ impl North {
 
         let main_metrics = TokioMetrics::new();
         let app = self.service.poem_app;
-        let end = app.at("/metrics/default", main_metrics.exporter()).with(Tracing);
+        let end = app
+            .at("/metrics/default", main_metrics.exporter())
+            .with(Tracing);
         let state = self.service.state_data_list.as_slice();
         let d = [..state];
 
@@ -95,5 +97,4 @@ impl North {
             .run(process_poem!(end, ["2", "5"]))
             .await
     }
-
 }

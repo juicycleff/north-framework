@@ -7,16 +7,16 @@ pub trait NorthApiTrait: PoemOpenApi + Sized + Clone {}
 pub trait NorthServiceBuilderTrait<T> {
     /// takes in a handler function
     #[cfg(feature = "api-poem")]
-    fn handler<E>(self, path: impl AsRef<str>, ep: E) ->  Self
-        where
-            E: IntoEndpoint,
-            E::Endpoint: 'static;
+    fn handler<E>(self, path: impl AsRef<str>, ep: E) -> Self
+    where
+        E: IntoEndpoint,
+        E::Endpoint: 'static;
 
     /// takes in the version of the service
-    fn version(self, version: &str) ->  Self;
+    fn version(self, version: &str) -> Self;
 
     /// takes in the name of the service
-    fn name(self, name: &str) ->  Self;
+    fn name(self, name: &str) -> Self;
 
     /// prefix to add to all route paths
     fn path_prefix(self, path: &str) -> Self;

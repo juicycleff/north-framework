@@ -1,15 +1,12 @@
-use std::convert::Infallible;
-use hyper::{Body, Request, Response};
-use hyper::server::conn::AddrStream;
-use crate::Error;
 use crate::service::NorthServiceOptions;
+use crate::Error;
+use hyper::server::conn::AddrStream;
+use hyper::{Body, Request, Response};
+use std::convert::Infallible;
 
-pub struct NorthServer {
-}
+pub struct NorthServer {}
 
-pub async fn start_server(
-    service_option: &NorthServiceOptions,
-) -> Result<(), Error> {
+pub async fn start_server(service_option: &NorthServiceOptions) -> Result<(), Error> {
     let full_addr = format!(
         "{}:{}",
         service_option.address.clone().unwrap(),
@@ -21,16 +18,18 @@ pub async fn start_server(
     let service = hyper::service::make_service_fn(|socket: &AddrStream| {
         let remote_addr = socket.remote_addr();
         async move {
-            Ok::<_, Infallible>(hyper::service::service_fn(move |_: Request<Body>| async move {
-                Ok::<_, Infallible>(
-                    Response::new(Body::from(format!("Hello, {}!", remote_addr)))
-                )
-            }))
+            Ok::<_, Infallible>(hyper::service::service_fn(
+                move |_: Request<Body>| async move {
+                    Ok::<_, Infallible>(Response::new(Body::from(format!(
+                        "Hello, {}!",
+                        remote_addr
+                    ))))
+                },
+            ))
         }
     });
 
-    let server = hyper::Server::bind(&addr)
-        .serve(service);
+    let server = hyper::Server::bind(&addr).serve(service);
 
     if !service_option.graceful_shutdown {
         if let Err(e) = server.await {
@@ -40,10 +39,9 @@ pub async fn start_server(
     }
 
     let (tx, rx) = tokio::sync::oneshot::channel::<()>();
-    let graceful = server
-        .with_graceful_shutdown(async {
-            rx.await.ok();
-        });
+    let graceful = server.with_graceful_shutdown(async {
+        rx.await.ok();
+    });
 
     if let Err(e) = graceful.await {
         eprintln!("server error: {}", e);

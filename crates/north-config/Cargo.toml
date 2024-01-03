@@ -23,21 +23,21 @@ default = []
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }
 log = { workspace = true }
-dotenvy = "0.15"
+dotenvy = "0.15.7"
 econf = "0.2.1"
-notify = "6.0"
+notify = "6.1.1"
 json_dotpath = "1.1"
 convert_case = "0.6"
-async-trait = { version = "0.1" }
+async-trait = { version = "0.1.77" }
 
 tokio = { workspace = true, optional = true, features = ["fs", "io-util"] }
 async-std = { version = "1.12", optional = true }
 
 serde_yaml = { workspace = true, optional = true }
-ron = { version ="0.8", optional = true }
-toml = { version = "0.7", optional = true }
+ron = { version ="0.8.1", optional = true }
+toml = { version = "0.8.8", optional = true }
 
 
 [dev-dependencies]
-tokio-test = "0.4"
+tokio-test = "0.4.3"
 envmnt = "0.10.4"

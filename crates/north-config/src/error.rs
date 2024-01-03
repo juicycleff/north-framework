@@ -2,7 +2,13 @@ use std::fmt::Display;
 
 /// # Error
 ///
-/// Custom error for north config
+/// Custom error enum for handling various kinds of errors in the application.
+///
+/// The `Error` enum has several variants:
+///
+/// - `IoError`: Represents an I/O error encountered while performing file I/O operations. It contains an `std::io::Error` as the inner error.
+/// - `JsonParseError`: Represents an error encountered while parsing JSON data. It contains a `serde_json::Error` as the inner error.
+/// - `RonParseError`: Represents an error encountered while parsing RON data. This variant is only available if the `"ron"` feature is enabled. It contains
 #[derive(Debug)]
 pub enum Error {
     IoError(std::io::Error),

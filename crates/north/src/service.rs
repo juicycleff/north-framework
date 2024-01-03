@@ -48,7 +48,10 @@ pub struct NorthService {
 }
 
 /// NorthService struct for constructing a North service
-pub struct NorthServiceBuilder<T> where T: PoemOpenApi + Clone + 'static {
+pub struct NorthServiceBuilder<T>
+where
+    T: PoemOpenApi + Clone + 'static,
+{
     pub(crate) options: Box<NorthServiceOptions>,
 
     pub(crate) state_data_list: Vec<Box<dyn NorthStateData>>,
@@ -66,7 +69,9 @@ pub struct NorthServiceBuilder<T> where T: PoemOpenApi + Clone + 'static {
     pub(crate) db_connection: Option<ArcArangoConnection>,
 }
 
-impl<T> Default for NorthServiceBuilder<T> where T: PoemOpenApi + Clone + 'static
+impl<T> Default for NorthServiceBuilder<T>
+where
+    T: PoemOpenApi + Clone + 'static,
 {
     fn default() -> Self {
         NorthServiceBuilder {
@@ -88,7 +93,10 @@ impl<T> Default for NorthServiceBuilder<T> where T: PoemOpenApi + Clone + 'stati
     }
 }
 
-impl<T> NorthServiceBuilder<T> where T: PoemOpenApi + Clone + 'static {
+impl<T> NorthServiceBuilder<T>
+where
+    T: PoemOpenApi + Clone + 'static,
+{
     pub(crate) fn app_prefix(&self) -> String {
         let mut prefix = self.options.path_prefix.clone().unwrap();
         if prefix.starts_with('/') {
@@ -108,12 +116,15 @@ impl<T> NorthServiceBuilder<T> where T: PoemOpenApi + Clone + 'static {
 }
 
 /// implement service trait for north service
-impl<T> NorthServiceBuilderTrait<T> for NorthServiceBuilder<T> where T: PoemOpenApi + Clone + 'static {
+impl<T> NorthServiceBuilderTrait<T> for NorthServiceBuilder<T>
+where
+    T: PoemOpenApi + Clone + 'static,
+{
     #[cfg(feature = "api-poem")]
     fn handler<E>(self, _path: impl AsRef<str>, _ep: E) -> Self
-        where
-            E: IntoEndpoint,
-            E::Endpoint: 'static,
+    where
+        E: IntoEndpoint,
+        E::Endpoint: 'static,
     {
         // self.poem_app.nest(path, ep);
         self
@@ -171,7 +182,7 @@ impl<T> NorthServiceBuilderTrait<T> for NorthServiceBuilder<T> where T: PoemOpen
     }
 
     #[cfg(feature = "api-poem")]
-    fn controller(mut self, api: T) -> Self{
+    fn controller(mut self, api: T) -> Self {
         self.apis = Some(api);
         self
     }
@@ -183,7 +194,9 @@ impl<T> NorthServiceBuilderTrait<T> for NorthServiceBuilder<T> where T: PoemOpen
 
     #[cfg(feature = "db-arango")]
     fn with_database(mut self, db_connection: Arc<DatabaseConnection>) -> Self {
-        self.db_connection = Some(ArcArangoConnection{connection: db_connection});
+        self.db_connection = Some(ArcArangoConnection {
+            connection: db_connection,
+        });
         self
     }
 
@@ -209,18 +222,14 @@ impl<T> NorthServiceBuilderTrait<T> for NorthServiceBuilder<T> where T: PoemOpen
         self
     }
 
-
     #[cfg(feature = "api-poem")]
     fn build(&mut self) -> NorthService {
         // let poem_app = Route::new();
         let title = self.options.name.as_ref().unwrap().clone();
         let version = self.options.version.as_ref().unwrap().clone();
 
-        let api_service = OpenApiService::new(
-            self.apis.clone().unwrap(),
-            title,
-            version,
-        ).server(self.full_address());
+        let api_service = OpenApiService::new(self.apis.clone().unwrap(), title, version)
+            .server(self.full_address());
 
         let ui = api_service.swagger_ui();
         let prefix = self.app_prefix();
@@ -228,15 +237,16 @@ impl<T> NorthServiceBuilderTrait<T> for NorthServiceBuilder<T> where T: PoemOpen
         let c_app = std::mem::take::<Option<Box<Route>>>(&mut self.custom_poem_app);
         let def_app = std::mem::take::<Route>(&mut self.poem_app);
 
-
         // println!(" len = {}", self.state_data_list.len());
 
         NorthService {
             options: self.options.clone(),
             state_data_list: self.state_data_list.clone(),
-            poem_app: c_app.unwrap_or(Box::new(def_app
-                .nest(format!("/{prefix}"), api_service)
-                .nest("/docs", ui)))
+            poem_app: c_app.unwrap_or(Box::new(
+                def_app
+                    .nest(format!("/{prefix}"), api_service)
+                    .nest("/docs", ui),
+            )),
         }
     }
 

@@ -1,4 +1,3 @@
-
 // pub struct Router {
 //     trees: HashMap<Method, Node<Box<dyn StoredService>>>,
 //     redirect_trailing_slash: bool,
