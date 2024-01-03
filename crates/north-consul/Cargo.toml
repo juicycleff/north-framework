@@ -1,6 +1,6 @@
 [package]
 name = "north-consul"
-version = "0.0.3"
+workspace.version = true
 edition = "2021"
 authors = ["Rex Raphael <rex.raphael@outlook.com>", "Andrew Useckas <andrew.useckas@threat-x.com>", "Stu Small <stuart.small@threat-x.com>", "YoungKing <yanckin@gmail.com>", "Pierre Souchay <https://github.com/pierresouchay>", "Tomer Shalev <https://github.com/tomers>"]
 description = "Rust client libray for Consul HTTP API"

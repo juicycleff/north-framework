@@ -1,6 +1,6 @@
 [package]
 name = "north"
-version = "0.1.4"
+workspace.version = true
 edition = "2021"
 authors = ["Rex Raphael <rex.raphael@outlook.com>"]
 description = "North Microservice Framework"
