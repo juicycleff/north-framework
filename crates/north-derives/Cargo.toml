@@ -1,6 +1,6 @@
 [package]
 name = "north-derives"
-workspace.version = true
+version.workspace = true
 edition = "2021"
 authors = ["Rex Raphael <rex.raphael@outlook.com>"]
 description = "North config is a multi source configuration crate designed as part of the North Microservice Framework"

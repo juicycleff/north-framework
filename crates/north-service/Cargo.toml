@@ -1,6 +1,6 @@
 [package]
 name = "north-service"
-workspace.version = true
+version.workspace = true
 edition = "2021"
 authors = ["Rex Raphael <rex.raphael@outlook.com>"]
 description = "Service discovery and registry for North Microservice Framework"

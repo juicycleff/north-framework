@@ -1,6 +1,6 @@
 [package]
 name = "north-common"
-workspace.version = true
+version.workspace = true
 edition = "2021"
 description = "Common logic used in North Microservice Framework"
 readme = "README.md"
