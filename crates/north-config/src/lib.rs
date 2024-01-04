@@ -56,6 +56,7 @@ mod tests {
         let config_options = NorthConfigOptions {
             sources: vec![ConfigSource::File(
                 "../../examples/configs/test.{{env}}.json".to_string(),
+                None,
             )],
         };
         let config = crate::new_config::<DemoConfig>(config_options).await;
@@ -84,6 +85,7 @@ mod tests {
         let config_options = NorthConfigOptions {
             sources: vec![ConfigSource::File(
                 "../../examples/configs/test.{{env}}.json".to_string(),
+                None,
             )],
         };
         let config = crate::new_config::<DemoConfig>(config_options);
@@ -97,6 +99,7 @@ mod tests {
         let config_options = NorthConfigOptions {
             sources: vec![ConfigSource::File(
                 "../../examples/configs/test.debug.json".to_string(),
+                None,
             )],
         };
         let config = crate::new_config::<DemoConfig>(config_options).await;
@@ -125,6 +128,7 @@ mod tests {
         let config_options = NorthConfigOptions {
             sources: vec![ConfigSource::File(
                 "../../examples/configs/test.debug.json".to_string(),
+                None,
             )],
         };
         let config = crate::new_config::<DemoConfig>(config_options);
@@ -137,8 +141,8 @@ mod tests {
     async fn merge_and_overwrite_duplicate_keys_from_two_config_file() {
         let config_options = NorthConfigOptions {
             sources: vec![
-                ConfigSource::File("../../examples/configs/test.debug.json".to_string()),
-                ConfigSource::File("../../examples/configs/test.release.json".to_string()),
+                ConfigSource::File("../../examples/configs/test.debug.json".to_string(), None),
+                ConfigSource::File("../../examples/configs/test.release.json".to_string(), None),
             ],
         };
         let config = crate::new_config::<DemoConfig>(config_options).await;
@@ -152,8 +156,8 @@ mod tests {
     fn merge_and_overwrite_duplicate_keys_from_two_config_file() {
         let config_options = NorthConfigOptions {
             sources: vec![
-                ConfigSource::File("../../examples/configs/test.debug.json".to_string()),
-                ConfigSource::File("../../examples/configs/test.release.json".to_string()),
+                ConfigSource::File("../../examples/configs/test.debug.json".to_string(), None),
+                ConfigSource::File("../../examples/configs/test.release.json".to_string(), None),
             ],
         };
         let config = crate::new_config::<DemoConfig>(config_options);
@@ -166,8 +170,8 @@ mod tests {
     fn merge_two_files_from_json_and_yaml_sources() {
         let config_options = NorthConfigOptions {
             sources: vec![
-                ConfigSource::File("../../examples/configs/test.release.json".to_string()),
-                ConfigSource::File("../../examples/configs/test.release.yaml".to_string()),
+                ConfigSource::File("../../examples/configs/test.release.json".to_string(), None),
+                ConfigSource::File("../../examples/configs/test.release.yaml".to_string(), None),
             ],
         };
         let config = crate::new_config::<DemoConfig>(config_options);
@@ -181,9 +185,9 @@ mod tests {
     fn merge_three_files_from_json_toml_and_yaml_sources() {
         let config_options = NorthConfigOptions {
             sources: vec![
-                ConfigSource::File("../../examples/configs/test.release.json".to_string()),
-                ConfigSource::File("../../examples/configs/test.release.yaml".to_string()),
-                ConfigSource::File("../../examples/configs/test.release.toml".to_string()),
+                ConfigSource::File("../../examples/configs/test.release.json".to_string(), None),
+                ConfigSource::File("../../examples/configs/test.release.yaml".to_string(), None),
+                ConfigSource::File("../../examples/configs/test.release.toml".to_string(), None),
             ],
         };
         let config = crate::new_config::<DemoConfig>(config_options);
@@ -196,8 +200,8 @@ mod tests {
     fn merge_deep_nested_objects() {
         let config_options = NorthConfigOptions {
             sources: vec![
-                ConfigSource::File("../../examples/configs/test.release.json".to_string()),
-                ConfigSource::File("../../examples/configs/test.debug.json".to_string()),
+                ConfigSource::File("../../examples/configs/test.release.json".to_string(), None),
+                ConfigSource::File("../../examples/configs/test.debug.json".to_string(), None),
             ],
         };
         let config = crate::new_config::<DemoConfig>(config_options);
@@ -217,9 +221,12 @@ mod tests {
 
         let config_options = NorthConfigOptions {
             sources: vec![
-                ConfigSource::File("../../examples/configs/test.release.json".to_string()),
-                ConfigSource::File("../../examples/configs/test.debug.json".to_string()),
-                ConfigSource::Env(EnvSourceOptions::default()),
+                ConfigSource::File("../../examples/configs/test.release.json".to_string(), None),
+                ConfigSource::File("../../examples/configs/test.debug.json".to_string(), None),
+                ConfigSource::Env(EnvSourceOptions{
+                    prefix: Some("NORTH_".to_string()),
+                    ..Default::default()
+                }),
             ],
         };
         let config = crate::new_config::<DemoConfig>(config_options);
@@ -231,6 +238,8 @@ mod tests {
         assert_eq!(nested.foo, "env foo");
         assert_eq!(nested.bar, "env bar");
 
+        envmnt::remove("NORTH_HOST");
+        envmnt::remove("NORTH_NESTED__FOO");
         destroy_env();
     }
 
@@ -280,12 +289,43 @@ mod tests {
         envmnt::remove("TESTNORTH_NESTED__BAR");
     }
 
+    #[test]
+    fn read_deep_array_config_from_env_sources() {
+        #[derive(Clone, serde::Deserialize, serde::Serialize, Debug)]
+        struct Names {
+            pub first: String
+        }
+        #[derive(Clone, serde::Deserialize, serde::Serialize, Debug)]
+        struct TestStr {
+            pub names: Vec<Names>
+        }
+
+        envmnt::set("NORTH_NAMES__0__FIRST", "Run");
+
+        let mut env_opts = EnvSourceOptions::default();
+        env_opts.prefix = Some("NORTH".to_string());
+
+        let config_options = NorthConfigOptions {
+            sources: vec![ConfigSource::Env(env_opts)],
+        };
+
+        let config = crate::new_config::<TestStr>(config_options);
+        let config = config.get_value().clone();
+        let names = config.names;
+
+        assert_eq!(names.len(), 1);
+        assert_eq!(names[0].first, "Run");
+
+        envmnt::remove("NORTH_NAMES__0__FIRST");
+    }
+
     #[cfg(feature = "ron")]
     #[test]
     fn read_config_from_ron_source() {
         let config_options = NorthConfigOptions {
             sources: vec![ConfigSource::File(
                 "../../examples/configs/test.release.ron".to_string(),
+                None
             )],
         };
         let config = crate::new_config::<DemoConfig>(config_options);

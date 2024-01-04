@@ -95,6 +95,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anstyle"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7079075b41f533b8c61d2a4d073c4676e1f8b249ff94a393b0595db304e0dd87"
+
+[[package]]
 name = "anyhow"
 version = "1.0.62"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -874,12 +880,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "difflib"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6184e33543162437515c2e2b48714794e37845ec9851711914eec9d308f6ebe8"
-
-[[package]]
 name = "digest"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1054,15 +1054,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "float-cmp"
-version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "98de4bbd547a563b716d8dfa9aad1cb19bfab00f4fa09a6a4ed21dbcf44ce9c4"
-dependencies = [
- "num-traits",
-]
-
-[[package]]
 name = "fnv"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1095,9 +1086,9 @@ dependencies = [
 
 [[package]]
 name = "fragile"
-version = "1.2.1"
+version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "85dcb89d2b10c5f6133de2efd8c11959ce9dbb46a2f7a4cab208c4eeda6ce1ab"
+checksum = "6c2141d6d6c8512188a7891b4b01590a45f6dac67afb4f255c4124dbb86d4eaa"
 
 [[package]]
 name = "fsevent-sys"
@@ -1586,18 +1577,18 @@ checksum = "879d54834c8c76457ef4293a689b2a8c59b076067ad77b15efafbb05f92a592b"
 
 [[package]]
 name = "itertools"
-version = "0.10.5"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b0fd2260e829bddf4cb6ea802289de2f86d6a7a690192fbe91b3f46e0f2c8473"
+checksum = "b1c173a5686ce8bfa551b3563d0c2170bf24ca44da99c7ca4bfdab5418c3fe57"
 dependencies = [
  "either",
 ]
 
 [[package]]
 name = "itertools"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1c173a5686ce8bfa551b3563d0c2170bf24ca44da99c7ca4bfdab5418c3fe57"
+checksum = "25db6b064527c5d482d0423354fcd07a89a2dfe07b67892e62411946db7f07b0"
 dependencies = [
  "either",
 ]
@@ -1828,9 +1819,9 @@ dependencies = [
 
 [[package]]
 name = "mockall"
-version = "0.11.2"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2be9a9090bc1cac2930688fa9478092a64c6a92ddc6ae0692d46b37d9cab709"
+checksum = "43766c2b5203b10de348ffe19f7e54564b64f3d6018ff7648d1e2d6d3a0f0a48"
 dependencies = [
  "cfg-if 1.0.0",
  "downcast",
@@ -1843,14 +1834,14 @@ dependencies = [
 
 [[package]]
 name = "mockall_derive"
-version = "0.11.2"
+version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86d702a0530a0141cf4ed147cf5ec7be6f2c187d4e37fcbefc39cf34116bfe8f"
+checksum = "af7cbce79ec385a1d4f54baa90a76401eb15d9cab93685f62e7e9f942aa00ae2"
 dependencies = [
  "cfg-if 1.0.0",
  "proc-macro2 1.0.74",
  "quote 1.0.35",
- "syn 1.0.99",
+ "syn 2.0.46",
 ]
 
 [[package]]
@@ -1926,24 +1917,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "normalize-line-endings"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61807f77802ff30975e01f4f071c8ba10c022052f98b3294119f3e615d13e5be"
-
-[[package]]
 name = "north"
-version = "0.1.4"
+version = "0.1.9"
 dependencies = [
  "aragog",
  "async-trait",
  "derive_more",
  "futures",
  "hyper",
- "itertools 0.11.0",
+ "itertools 0.12.0",
  "mockall",
- "north-common 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "north-derives 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "north-common 0.0.3",
+ "north-derives 0.1.2",
  "poem",
  "poem-openapi",
  "rstest",
@@ -1976,22 +1961,6 @@ dependencies = [
 [[package]]
 name = "north-common"
 version = "0.0.3"
-dependencies = [
- "async-trait",
- "chrono",
- "log",
- "log4rs",
- "rstest",
- "serde",
- "serde_json",
- "serde_yaml 0.9.10",
- "syn 2.0.46",
- "yansi",
-]
-
-[[package]]
-name = "north-common"
-version = "0.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "38905c5732e7c0001e8335f4c8a0a8de9ddb3fe40b0e93e727d62cbc858fffdf"
 dependencies = [
@@ -2007,8 +1976,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "north-common"
+version = "0.1.9"
+dependencies = [
+ "async-trait",
+ "chrono",
+ "log",
+ "log4rs",
+ "rstest",
+ "serde",
+ "serde_json",
+ "serde_yaml 0.9.10",
+ "syn 2.0.46",
+ "yansi",
+]
+
+[[package]]
 name = "north-config"
-version = "0.0.31"
+version = "0.1.9"
 dependencies = [
  "async-std",
  "async-trait",
@@ -2046,7 +2031,7 @@ dependencies = [
 
 [[package]]
 name = "north-consul"
-version = "0.0.3"
+version = "0.1.9"
 dependencies = [
  "async-trait",
  "base64 0.13.0",
@@ -2067,8 +2052,10 @@ dependencies = [
 [[package]]
 name = "north-derives"
 version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "adc1bad4ded7608abf1bd245dc796aec2a581b2a89fc6705852f2743b64c8b93"
 dependencies = [
- "north-common 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "north-common 0.0.3",
  "poem",
  "quote 1.0.35",
  "syn 1.0.99",
@@ -2076,11 +2063,9 @@ dependencies = [
 
 [[package]]
 name = "north-derives"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "adc1bad4ded7608abf1bd245dc796aec2a581b2a89fc6705852f2743b64c8b93"
+version = "0.1.9"
 dependencies = [
- "north-common 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "north-common 0.0.3",
  "poem",
  "quote 1.0.35",
  "syn 1.0.99",
@@ -2088,7 +2073,7 @@ dependencies = [
 
 [[package]]
 name = "north-service"
-version = "0.1.1"
+version = "0.1.9"
 dependencies = [
  "async-trait",
  "async-zeroconf",
@@ -2668,16 +2653,13 @@ checksum = "eb9f9e6e233e5c4a35559a617bf40a4ec447db2e84c20b55a6f83167b7e57872"
 
 [[package]]
 name = "predicates"
-version = "2.1.1"
+version = "3.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a5aab5be6e4732b473071984b3164dbbfb7a3674d30ea5ff44410b6bcd960c3c"
+checksum = "6dfc28575c2e3f19cb3c73b93af36460ae898d426eba6fc15b9bd2a5220758a0"
 dependencies = [
- "difflib",
- "float-cmp",
- "itertools 0.10.5",
- "normalize-line-endings",
+ "anstyle",
+ "itertools 0.11.0",
  "predicates-core",
- "regex",
 ]
 
 [[package]]

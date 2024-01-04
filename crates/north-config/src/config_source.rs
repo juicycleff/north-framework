@@ -102,12 +102,15 @@ pub trait CustomConfigSource: CustomConfigSourceClone + Send + Sync {
 /// ## Using `Custom` variant with a custom implementation
 ///
 /// ```
-/// use north_config::{ConfigSource, CustomConfigSource};
-///
+/// use north_config::{ConfigSource, CustomConfigSource, Error};
+/// #[derive(Clone, Debug)]
 /// struct MyCustomSource;
 ///
 /// impl CustomConfigSource for MyCustomSource {
 ///     // implementation details here
+///    fn get_config_value(&self) -> Result<serde_json::Value, Error> {
+///        todo!()
+///    }
 /// }
 ///
 /// let source = ConfigSource::Custom(Box::new(MyCustomSource));
@@ -333,15 +336,23 @@ pub async fn new_config<T: Clone + de::DeserializeOwned>(
 /// # Example
 ///
 /// ```rust
-/// use serde_derive::Deserialize;
+/// use north_config::{NorthConfigOptions, NorthConfig, EnvSourceOptions, ConfigSource};
 ///
-/// #[derive(Debug, Deserialize)]
+/// envmnt::set("NORTH_NAMES__0__FIRST", "Run");
+///
+/// let mut env_opts = EnvSourceOptions::default();
+/// env_opts.prefix = Some("NORTH".to_string());
+///#[derive(Clone, serde::Deserialize, serde::Serialize, Debug)]
+///struct Names {
+///    pub first: String
+///}
+/// #[derive(Debug, serde::Deserialize, Clone)]
 /// struct MyConfig {
-///     // add fields here
+///    pub names: Vec<Names>
 /// }
 ///
-/// let option = NorthConfigOptions::new();  // replace with actual options
-/// let config: NorthConfig<MyConfig> = new_config(option);
+/// let option = NorthConfigOptions::new(vec![ConfigSource::Env(env_opts)]);  // replace with actual options
+/// let config: NorthConfig<MyConfig> = crate::north_config::new_config(option);
 /// ```
 ///
 /// # Panics
@@ -654,12 +665,13 @@ fn resolve_file_source(
 ///     Kebab,
 /// }
 ///
-/// fn process_envs(option: EnvSourceOptions) -> Result<Value, Error> {
+/// fn process_envs(option: EnvSourceOptions) -> Result<Value, dyn Error> {
 ///     // Implementation goes here
+///     Ok(Value::default())
 /// }
 /// ```
 fn process_envs(option: EnvSourceOptions) -> Result<Value, Error> {
-    let temp_prefix = option.prefix.unwrap_or_else(|| "NORTH".to_string());
+    let temp_prefix = option.prefix.unwrap_or_else(|| "NORTH_".to_string());
     let prefix: &str = temp_prefix.as_str();
 
     let nested_separator = option.nested_separator.unwrap_or_else(|| "__".to_string());
@@ -674,16 +686,7 @@ fn process_envs(option: EnvSourceOptions) -> Result<Value, Error> {
         }
 
         let new_key = key.strip_prefix(prefix).expect("env var prefix missing");
-        let mut dot_key: String = String::new();
-        for sub_keys in new_key.split(separator) {
-            if dot_key.is_empty() {
-                dot_key.push_str(sub_keys.to_case(case).as_str());
-            } else {
-                dot_key.push('.');
-                dot_key.push_str(sub_keys.to_case(case).as_str());
-            }
-        }
-
+        let dot_key: String = new_key.replace(separator.clone(), ".").clone().to_case(case);
         obj.dot_set(dot_key.as_str(), value).unwrap();
     }
 
