@@ -293,14 +293,14 @@ mod tests {
     fn read_deep_array_config_from_env_sources() {
         #[derive(Clone, serde::Deserialize, serde::Serialize, Debug)]
         struct Names {
-            pub first: String
+            pub first: i32
         }
         #[derive(Clone, serde::Deserialize, serde::Serialize, Debug)]
         struct TestStr {
             pub names: Vec<Names>
         }
 
-        envmnt::set("NORTH_NAMES__0__FIRST", "Run");
+        envmnt::set("NORTH_NAMES__0__FIRST", "50");
 
         let mut env_opts = EnvSourceOptions::default();
         env_opts.prefix = Some("NORTH".to_string());
@@ -314,7 +314,7 @@ mod tests {
         let names = config.names;
 
         assert_eq!(names.len(), 1);
-        assert_eq!(names[0].first, "Run");
+        assert_eq!(names[0].first, 50);
 
         envmnt::remove("NORTH_NAMES__0__FIRST");
     }

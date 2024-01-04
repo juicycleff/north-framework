@@ -687,7 +687,8 @@ fn process_envs(option: EnvSourceOptions) -> Result<Value, Error> {
 
         let new_key = key.strip_prefix(prefix).expect("env var prefix missing");
         let dot_key: String = new_key.replace(separator.clone(), ".").clone().to_case(case);
-        obj.dot_set(dot_key.as_str(), value).unwrap();
+        let new_value: serde_json::Value = serde_json::from_str(value.as_str()).expect("go value");
+        obj.dot_set(dot_key.as_str(), new_value).unwrap();
     }
 
     Ok(obj)
