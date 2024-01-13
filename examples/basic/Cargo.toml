@@ -7,7 +7,9 @@ edition = "2021"
 
 [dependencies]
 tokio = { version = "1.18", features = ["full"] }
-poem-openapi = { version = "3.0.0", features = ["swagger-ui"] }
+poem-openapi = { version = "4.0.0", features = ["swagger-ui"] }
 north = { path = "../../crates/north", features = ["api-poem"] }
 north-config = { path = "../../crates/north-config", features = ["yaml", "tokio"], default-features = true }
 serde = "1.0.194"
+dotenv = "0.15.0"
+serde-this-or-that = "0.4"

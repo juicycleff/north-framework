@@ -1,8 +1,8 @@
 mod routes;
 
+use serde_this_or_that::{as_i64};
 use crate::routes::{Api, SecondApi};
 use north::{NorthServiceBuilderTrait, NorthStateData};
-use poem_openapi::__private::poem::web::CompressionLevel::Default;
 use poem_openapi::__private::serde::{Deserialize, Serialize};
 
 #[derive(Clone)]
@@ -22,10 +22,14 @@ impl NorthStateData for TestDataMod {}
 #[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct ExampleConfig {
     pub host: String,
+    #[serde(deserialize_with = "as_i64")]
+    pub port: i64
 }
 
 #[tokio::main]
 pub async fn main() -> std::io::Result<()> {
+    dotenv::dotenv().ok();
+
     let env_cfg = north_config::EnvSourceOptions {
         prefix: Some("NORTH_".to_string()),
         ..std::default::Default::default()
@@ -34,7 +38,7 @@ pub async fn main() -> std::io::Result<()> {
     let config_options = north_config::NorthConfigOptions {
         sources: vec![
             north_config::ConfigSource::File(
-                "../configs/bootstraps.{{env}}.yaml".to_string(),
+                "../configs/bootstrap.{{env}}.yaml".to_string(),
                 Some(north_config::FileSourceOptions {
                     skip_on_error: true,
                     ..std::default::Default::default()

@@ -1,8 +1,10 @@
 use std::collections::HashMap;
 
 #[derive(Copy, Clone, Debug)]
+#[derive(Default)]
 pub enum DiscoveryHttpMethods {
     Post,
+    #[default]
     Get,
     Delete,
     Patch,
@@ -11,11 +13,7 @@ pub enum DiscoveryHttpMethods {
     Put,
 }
 
-impl Default for DiscoveryHttpMethods {
-    fn default() -> Self {
-        DiscoveryHttpMethods::Get
-    }
-}
+
 /*
 #[derive(Default, Clone)]
 pub struct ScriptDiscoveryOptions {

@@ -2,17 +2,15 @@ use std::fmt;
 
 /// States of a service
 #[derive(Clone)]
+#[derive(Default)]
 pub enum ServiceStatus {
+    #[default]
     Critical,
     Passing,
     Warning,
 }
 
-impl Default for ServiceStatus {
-    fn default() -> Self {
-        ServiceStatus::Critical
-    }
-}
+
 
 impl fmt::Display for ServiceStatus {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

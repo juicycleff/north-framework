@@ -22,7 +22,7 @@ error-chain = "0.12"
 url = "2.1"
 
 [dev-dependencies]
-base64 = "0.13"
+base64 = "0.21.7"
 hostname = "0.3"
 rand = "0.8.3"
 rstest = { workspace = true }

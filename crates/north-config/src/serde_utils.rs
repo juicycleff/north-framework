@@ -76,7 +76,7 @@ pub fn merge_json(a: &mut Value, b: Value) {
 ///  merge_json_and_yaml(&mut a, b.to_string())
 /// ```
 pub fn merge_json_and_yaml(a: &mut Value, raw_str: String) {
-    let try_json = serde_yaml::from_str::<Value>(&*raw_str).unwrap();
+    let try_json = serde_yaml::from_str::<Value>(&raw_str).unwrap();
     merge_json(a, try_json)
 }
 
@@ -173,16 +173,16 @@ impl Merge for Value {
 
 fn merge(a: &mut Value, b: &Value) {
     match (a, b) {
-        (&mut Value::Object(ref mut a), &Value::Object(ref b)) => {
+        (&mut Value::Object(ref mut a), Value::Object(b)) => {
             for (k, v) in b {
                 merge(a.entry(k.clone()).or_insert(Value::Null), v);
             }
         }
-        (&mut Value::Array(ref mut a), &Value::Array(ref b)) => {
+        (&mut Value::Array(ref mut a), Value::Array(b)) => {
             a.extend(b.clone());
             a.dedup();
         }
-        (&mut Value::Array(ref mut a), &Value::Object(ref b)) => {
+        (&mut Value::Array(ref mut a), Value::Object(b)) => {
             a.push(Value::Object(b.clone()));
             a.dedup();
         }

@@ -131,7 +131,7 @@ impl ServiceInstanceState {
 
     pub fn set_connection_failed_time(&mut self, message: Option<String>) {
         self.last_connection_failed_timestamp = Some(Local::now().timestamp_millis());
-        self.last_connection_failed_message = message.unwrap_or_else(|| "".to_string());
+        self.last_connection_failed_message = message.unwrap_or_default();
         self.status = ServiceStatus::Critical;
     }
 

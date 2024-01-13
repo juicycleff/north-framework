@@ -9,7 +9,7 @@ pub fn watch_file_path(path: Box<Path>) -> Result<(), crate::Error> {
     })
     .unwrap();
 
-    watcher.watch(&*path, RecursiveMode::Recursive).unwrap();
+    watcher.watch(&path, RecursiveMode::Recursive).unwrap();
 
     Ok(())
 }
